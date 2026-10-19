@@ -5,13 +5,11 @@ import {
   IconUsersGroup,
   IconShieldLock,
   IconKey,
-  IconMinus,
   IconUserCheck,
-  IconRadio,
   IconArrowUpRight,
-  IconCheck,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { SectionAtmosphere } from "@/components/section-atmosphere";
 
 interface SquadUnit {
   id: string;
@@ -82,12 +80,10 @@ const SQUAD_UNITS: SquadUnit[] = [
 
 function SectionLabel({ k, label }: { k: string; label: string }) {
   return (
-    <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.32em] text-[#8b8f6b]">
-      <span className="inline-flex items-center gap-1.5 rounded border border-[#8b8f6b]/20 bg-[#8b8f6b]/10 px-2.5 py-1 text-[#c2b8a3]">
-        <IconMinus className="h-3 w-3" /> {k}
-      </span>
-      <span className="h-px w-12 bg-[#8b8f6b]/20 hidden sm:block" />
-      <span className="font-bold tracking-[0.24em] text-[#e8e6dc]">{label}</span>
+    <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.32em] text-[var(--muted-ink)]">
+      <span className="font-bold text-[var(--signal-accent)]">{k}</span>
+      <span className="theme-rule h-px w-12 hidden sm:block" />
+      <span className="font-bold tracking-[0.24em] text-[var(--ink)]">{label}</span>
     </div>
   );
 }
@@ -96,7 +92,10 @@ export default function TeamPage() {
   const [clearance, setClearance] = useState<"LEVEL 1" | "LEVEL 2" | "LEVEL 3" | "LEVEL 4">("LEVEL 2");
 
   return (
-    <main className="mx-auto max-w-[1440px] px-6 pt-8 md:px-8 md:pt-10 space-y-12">
+    <main data-background-slot="team" className="relative isolate mx-auto max-w-[1440px] min-h-screen px-6 pt-8 md:px-8 md:pt-10 space-y-12">
+      {/* BACKGROUND MOTIF: grid coordinates and scanning beacon. */}
+      <SectionAtmosphere variant="team" />
+      {/* BACKGROUND SLOT: team / personnel page placeholder. */}
       <SectionLabel k="06" label="PERSONNEL &amp; SQUADS" />
 
       {/* Header Banner */}
@@ -104,18 +103,18 @@ export default function TeamPage() {
         <div>
           <div className="flex items-center gap-2 font-mono text-[11px] tracking-widest text-amber-400">
             <IconShieldLock className="h-4 w-4" />
-            <span>SECURITY ENCLAVE // POLICY DIRECTIVE</span>
+            <span>Team access and policies</span>
           </div>
           <h1 className="mt-2 font-mono text-[32px] font-black tracking-tight text-[#e8e6dc] md:text-[42px] leading-none">
-            PERSONNEL // SQUAD MATRIX
+            Meet the team
           </h1>
           <p className="mt-3 max-w-[70ch] font-mono text-[13px] leading-relaxed text-[#8b8f6b]">
-            Per institutional defence policy, individual personal identifiers are protected behind security enclave protocols. Below is the tactical squad matrix and headcount allocation across MIT Manipal.
+            Explore RUGVED’s student squads, roles and current openings.
           </p>
         </div>
 
         {/* Security Clearance Simulator */}
-        <div className="rounded-xl border border-[#c2b8a3]/20 bg-[#111410] p-4 font-mono text-[11px]">
+        <div className="font-mono text-[11px]">
           <div className="text-[#8b8f6b] text-[10px] tracking-widest mb-2 flex items-center gap-1.5">
             <IconKey className="h-3.5 w-3.5 text-amber-400" /> SIMULATE CLEARANCE:
           </div>
@@ -162,7 +161,7 @@ export default function TeamPage() {
                   <span>STRENGTH: <span className="text-[#e8e6dc] font-bold">{unit.headcount}</span></span>
                 </div>
 
-                <p className="mt-4 font-mono text-[13px] leading-relaxed text-[#c2b8a3]/90">
+                <p className="mt-4 line-clamp-3 font-mono text-[13px] leading-relaxed text-[#c2b8a3]/90">
                   {unit.focus}
                 </p>
               </div>
@@ -197,14 +196,14 @@ export default function TeamPage() {
       <TacticalCard className="p-8 md:p-10">
         <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
           <div>
-            <div className="inline-flex items-center gap-2 rounded border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] font-bold text-emerald-300">
-              <IconUserCheck className="h-4 w-4" /> RECRUITMENT CALL // MIT MANIPAL STUDENTS
+            <div className="inline-flex items-center gap-2 font-mono text-[11px] font-bold text-[var(--field-accent)]">
+              <IconUserCheck className="h-4 w-4" /> Join us · MIT Manipal students
             </div>
             <h2 className="mt-3 font-mono text-[24px] font-bold text-[#e8e6dc] md:text-[28px]">
-              Join the Defence Robotics Initiative
+              Join the Team
             </h2>
             <p className="mt-2 font-mono text-[13px] leading-relaxed text-[#8b8f6b]">
-              We recruit passionate student engineers across Electronics, Mechanical, Computer Science, and Data Science. Hands-on experience with ROS2, NVIDIA Jetson, Altium PCB design, and CNC fabrication.
+              Join our electronics, mechanical or computing teams and build real-world robotics.
             </p>
           </div>
 

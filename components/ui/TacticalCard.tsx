@@ -7,7 +7,6 @@ interface TacticalCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
   badge?: string;
-  cornerReticles?: boolean;
   glowColor?: string;
   laserSweep?: boolean;
 }
@@ -16,7 +15,6 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
   children,
   className,
   badge,
-  cornerReticles = true,
   glowColor = "rgba(194, 184, 163, 0.15)",
   laserSweep = false,
   ...props
@@ -53,22 +51,9 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        // ── Glass Base ──
-        "group relative overflow-hidden rounded-xl",
-        "border border-white/[0.14]",
-        "bg-white/[0.06]",
-        "backdrop-blur-sm",
-        "shadow-[0_8px_32px_rgba(0,0,0,0.25)]",
-        "transition-all duration-300",
-
-        // ── Glass Highlight ──
-        "before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px",
-        "before:bg-white/[0.14]",
-
-        // ── Hover ──
-        "hover:border-white/[0.24]",
-        "hover:bg-white/[0.08]",
-        "hover:shadow-[0_16px_50px_-12px_rgba(0,0,0,0.55)]",
+        "tactical-card group relative",
+        "before:pointer-events-none before:absolute before:left-0 before:top-4 before:bottom-4 before:w-px",
+        "transition-colors duration-300",
 
         className
       )}
@@ -76,7 +61,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
     >
       {/* Dynamic Cursor Spotlight Radial Glow */}
       <div
-        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
           background: mousePos.active
             ? `radial-gradient(
@@ -88,25 +73,9 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
         }}
       />
 
-      {/* Subtle Glass Reflection */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.05] via-transparent to-transparent opacity-60" />
-
       {/* Laser Sweep Scanline */}
       {laserSweep && (
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-transparent via-[#c2b8a3]/[0.05] to-transparent animate-laser-sweep" />
-      )}
-
-      {/* Corner Tactical Reticles */}
-      {cornerReticles && (
-        <>
-          <span className="pointer-events-none absolute left-0 top-0 h-3.5 w-3.5 border-l-[1.5px] border-t-[1.5px] border-white/[0.25] transition-colors group-hover:border-white/[0.55]" />
-
-          <span className="pointer-events-none absolute right-0 top-0 h-3.5 w-3.5 border-r-[1.5px] border-t-[1.5px] border-white/[0.25] transition-colors group-hover:border-white/[0.55]" />
-
-          <span className="pointer-events-none absolute bottom-0 left-0 h-3.5 w-3.5 border-b-[1.5px] border-l-[1.5px] border-white/[0.25] transition-colors group-hover:border-white/[0.55]" />
-
-          <span className="pointer-events-none absolute bottom-0 right-0 h-3.5 w-3.5 border-b-[1.5px] border-r-[1.5px] border-white/[0.25] transition-colors group-hover:border-white/[0.55]" />
-        </>
       )}
 
       {/* Optional Top Right Tactical Badge */}

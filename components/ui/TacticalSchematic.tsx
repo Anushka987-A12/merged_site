@@ -7,9 +7,7 @@ import {
   IconBolt,
   IconShield,
   IconEye,
-  IconScan,
   IconActivity,
-  IconChevronRight,
   IconLayersLinked,
 } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -32,7 +30,7 @@ const HOTSPOTS: SubsystemHotspot[] = [
     id: "lidar-optics",
     name: "360° Solid-State LiDAR & Stereo Pod",
     code: "OPT-01",
-    category: "PERCEPTION // SENSORS",
+    category: "Perception and sensors",
     icon: IconEye,
     coords: { x: 50, y: 22 },
     status: "ACTIVE",
@@ -50,7 +48,7 @@ const HOTSPOTS: SubsystemHotspot[] = [
     id: "neural-compute",
     name: "AI Edge Compute & SLAM Core",
     code: "CMP-02",
-    category: "AUTONOMY // COMPUTE",
+    category: "Autonomy and compute",
     icon: IconCpu,
     coords: { x: 50, y: 48 },
     status: "OPTIMAL",
@@ -68,7 +66,7 @@ const HOTSPOTS: SubsystemHotspot[] = [
     id: "acoustic-gunshot",
     name: "FPGA Acoustic Gunshot Triangulation",
     code: "ACT-03",
-    category: "DEFENCE // DETECTION",
+    category: "Defence detection",
     icon: IconTarget,
     coords: { x: 26, y: 34 },
     status: "ENGAGED",
@@ -86,7 +84,7 @@ const HOTSPOTS: SubsystemHotspot[] = [
     id: "modular-payload",
     name: "Quick-Swap Mission Payload Bay",
     code: "PLD-04",
-    category: "MISSION // PAYLOAD",
+    category: "Mission payload",
     icon: IconLayersLinked,
     coords: { x: 50, y: 72 },
     status: "STANDBY",
@@ -104,7 +102,7 @@ const HOTSPOTS: SubsystemHotspot[] = [
     id: "track-drivetrain",
     name: "All-Terrain Dual-Track Powertrain",
     code: "DRV-05",
-    category: "MECHANICAL // PROPULSION",
+    category: "Mechanical propulsion",
     icon: IconBolt,
     coords: { x: 80, y: 60 },
     status: "OPTIMAL",
@@ -122,7 +120,7 @@ const HOTSPOTS: SubsystemHotspot[] = [
     id: "power-cell",
     name: "Swappable LiFePO4 Tactical Power Pack",
     code: "PWR-06",
-    category: "ELECTRONICS // POWER",
+    category: "Electronics and power",
     icon: IconShield,
     coords: { x: 20, y: 68 },
     status: "OPTIMAL",
@@ -172,7 +170,7 @@ export const TacticalSchematic: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-[13px] font-bold tracking-[0.2em] text-[#e8e6dc]">
-                WALRUS 2.0 // TACTICAL SCHEMATIC
+                WALRUS 2.0 Tactical Schematic
               </span>
               <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[9px] font-bold text-emerald-400">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
@@ -438,7 +436,7 @@ export const TacticalSchematic: React.FC = () => {
             <span className="inline-flex items-center gap-1.5">
               <IconRadar className="h-4 w-4 text-[#c2b8a3]" /> BUS: CAN 2.0B / ROS2 NODE STREAM
             </span>
-            <span className="text-emerald-400 font-bold">SECURE CHANNEL // AES-256</span>
+            <span className="text-emerald-400 font-bold">Secure channel · AES-256</span>
           </div>
         </div>
       </div>

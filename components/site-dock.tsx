@@ -4,21 +4,19 @@ import {
   IconHome,
   IconTank,
   IconCpu,
-  IconUsersGroup,
+  IconFileText,
   IconMail,
-  IconBrandGithub,
   IconBrandInstagram,
 } from "@tabler/icons-react";
 
 export function SiteDock() {
   const items = [
-    { title: "Home", icon: <IconHome className="h-full w-full text-[#c2b8a3]" />, href: "/" },
-    { title: "Projects", icon: <IconTank className="h-full w-full text-[#c2b8a3]" />, href: "/projects" },
-    { title: "Subsystems", icon: <IconCpu className="h-full w-full text-[#c2b8a3]" />, href: "/subsystems" },
-   
-    { title: "Contact", icon: <IconMail className="h-full w-full text-[#c2b8a3]" />, href: "/contact" },
-    
-    { title: "Instagram", icon: <IconBrandInstagram className="h-full w-full text-[#c2b8a3]" />, href: "https://www.instagram.com/rugved_systems" },
+    { title: "Home", icon: <IconHome className="h-full w-full text-[var(--field-accent)]" />, href: "/" },
+    { title: "Projects", icon: <IconTank className="h-full w-full text-[var(--field-accent)]" />, href: "/projects" },
+    { title: "Subsystems", icon: <IconCpu className="h-full w-full text-[var(--field-accent)]" />, href: "/subsystems" },
+    { title: "Research", icon: <IconFileText className="h-full w-full text-[var(--field-accent)]" />, href: "/research" },
+    { title: "Contact", icon: <IconMail className="h-full w-full text-[var(--field-accent)]" />, href: "/contact" },
+    { title: "Instagram", icon: <IconBrandInstagram className="h-full w-full text-[var(--field-accent)]" />, href: "https://www.instagram.com/rugved_systems" },
   ];
   return (
     <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">

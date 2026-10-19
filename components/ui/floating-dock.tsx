@@ -1,7 +1,6 @@
 "use client";
 import React, { useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import {
@@ -44,7 +43,6 @@ const FloatingDockMobile = ({
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
 
   return (
     <div className={cn("relative block md:hidden", className)}>
@@ -56,15 +54,9 @@ const FloatingDockMobile = ({
           >
             {items.map((item, idx) => {
               const isExternal = item.href.startsWith("http");
-              const isActive = !isExternal && pathname === item.href;
               const content = (
                 <div
-                  className={cn(
-                    "flex h-11 w-11 items-center justify-center rounded-full border backdrop-blur-xl shadow-lg transition-all",
-                    isActive
-                      ? "border-emerald-500/60 bg-emerald-950/60 text-emerald-300 shadow-[0_0_16px_rgba(16,185,129,0.4)]"
-                      : "border-[#c2b8a3]/20 bg-[#111410]/90 text-[#c2b8a3] hover:border-[#c2b8a3]/40"
-                  )}
+                  className="floating-dock-item flex h-11 w-11 items-center justify-center rounded-full border border-[#c2b8a3]/20 bg-[#111410]/90 text-[#c2b8a3] shadow-lg backdrop-blur-xl transition-all hover:border-[#c2b8a3]/40"
                 >
                   <div className="h-5 w-5">{item.icon}</div>
                 </div>
@@ -110,7 +102,7 @@ const FloatingDockMobile = ({
       <button
         onClick={() => setOpen(!open)}
         aria-label="Toggle tactical dock navigation"
-        className="flex h-12 w-12 items-center justify-center rounded-full border border-[#c2b8a3]/25 bg-[#111410]/95 text-[#c2b8a3] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:border-emerald-500/50"
+        className="floating-dock flex h-12 w-12 items-center justify-center rounded-full border border-[#c2b8a3]/25 bg-[#111410]/45 text-[#c2b8a3] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:border-emerald-500/50"
       >
         <IconLayoutNavbarCollapse className="h-5 w-5" />
       </button>
@@ -132,7 +124,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden h-16 items-end gap-3 rounded-full border border-[#c2b8a3]/20 bg-[#0c100c]/85 px-4 pb-3 shadow-[0_12px_48px_rgba(0,0,0,0.75)] backdrop-blur-2xl md:flex",
+        "floating-dock mx-auto hidden h-16 items-end gap-3 rounded-full border border-[#c2b8a3]/25 bg-[#0c100c]/45 px-4 pb-3 shadow-[0_12px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl md:flex",
         className
       )}
     >
@@ -155,9 +147,7 @@ function IconContainer({
   href: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
   const isExternal = href.startsWith("http");
-  const isActive = !isExternal && pathname === href;
 
   const distance = useTransform(mouseX, (val) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
@@ -200,12 +190,7 @@ function IconContainer({
       style={{ width, height }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={cn(
-        "relative flex aspect-square items-center justify-center rounded-full border transition-colors",
-        isActive
-          ? "border-emerald-400/80 bg-emerald-950/70 text-emerald-300 shadow-[0_0_18px_rgba(16,185,129,0.5)]"
-          : "border-[#c2b8a3]/15 bg-black/50 text-[#c2b8a3] hover:border-[#c2b8a3]/40 hover:bg-black/70"
-      )}
+      className="floating-dock-item relative flex aspect-square items-center justify-center rounded-full border border-[#c2b8a3]/15 bg-black/50 text-[#c2b8a3] transition-colors backdrop-blur-md hover:border-[#c2b8a3]/40 hover:bg-black/70"
     >
       <AnimatePresence>
         {hovered && (
@@ -227,10 +212,7 @@ function IconContainer({
         {icon}
       </motion.div>
 
-      {/* Active Indicator Dot */}
-      {isActive && (
-        <span className="absolute -bottom-1 h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
-      )}
+
     </motion.div>
   );
 

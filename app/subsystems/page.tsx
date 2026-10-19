@@ -10,7 +10,7 @@ import {
   IconCamera,
 } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
-import { useTheme } from "@/components/theme-provider";
+import { SectionAtmosphere } from "@/components/section-atmosphere";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    DATA
@@ -33,7 +33,7 @@ const DIVISIONS: Division[] = [
     icon: IconShieldCheck,
     leadRole: "Team Lead & Technical Directors",
     summary:
-      "The strategic apex of RUGVED Systems. Oversees inter-division synchronization, long-term technical roadmaps, competition targets, defence expo representation, and faculty advisory liaison.",
+      "Coordinates team strategy, technical roadmaps, competitions and faculty collaboration.",
     deliverables: ["Annual Strategic Roadmap", "Defence Expo Dossiers", "System Architecture Specs"],
   },
   {
@@ -43,7 +43,7 @@ const DIVISIONS: Division[] = [
     icon: IconSearch,
     leadRole: "Research Director & Paper Authors",
     summary:
-      "Conducts cutting-edge scientific exploration into robotic state estimation, terrain classification, and novel sensor fusion algorithms, converting lab breakthroughs into peer-reviewed papers and patents.",
+      "Studies robotic perception, terrain mapping and sensor fusion, turning results into papers and patents.",
     deliverables: ["Peer-Reviewed Papers", "Patent Filings", "Simulation Benchmarks"],
   },
   {
@@ -53,7 +53,7 @@ const DIVISIONS: Division[] = [
     icon: IconRobot,
     leadRole: "Autonomy & Computer Vision Leads",
     summary:
-      "The cognitive brain of our autonomous ground vehicles. Implements 3D SLAM, obstacle segmentation, deep learning perception, edge inference on NVIDIA Jetson, and reinforcement learning pathfinding.",
+      "Builds vehicle autonomy with 3D SLAM, edge AI, obstacle detection and adaptive path planning.",
     deliverables: ["Autonomous Nav Stack", "Real-Time 3D SLAM", "Computer Vision Models"],
   },
   {
@@ -63,7 +63,7 @@ const DIVISIONS: Division[] = [
     icon: IconSettings,
     leadRole: "Operations & PR Leads",
     summary:
-      "Controls timelines, procurement chains, industry sponsorships, financial budgeting, and public outreach to keep our engineering cycles frictionless.",
+      "Plans schedules, budgets, procurement, sponsorships and outreach for the engineering team.",
     deliverables: ["Sponsorship Pitches", "Budget Audits", "Media Campaigns"],
   },
   {
@@ -73,7 +73,7 @@ const DIVISIONS: Division[] = [
     icon: IconCircuitCapacitor,
     leadRole: "Electronics Head & Firmware Engineers",
     summary:
-      "The nervous system and power backbone of our robotic platforms. Engineers custom multi-layer PCBs, high-current power distribution, CAN bus telemetry, and real-time microcontroller firmware.",
+      "Designs circuit boards, power systems, telemetry and embedded firmware for our platforms.",
     deliverables: ["Custom Motor Drivers", "FPGA Acoustic Board", "Redundant BMS Module"],
   },
   {
@@ -83,7 +83,7 @@ const DIVISIONS: Division[] = [
     icon: IconCpu,
     leadRole: "Mechanical Lead & CAD Specialists",
     summary:
-      "Engineers the physical armor, high-torque dual-track drivetrains, modular payload mounts, and environmental sealing to ensure our platforms survive extreme terrain and heavy impact.",
+      "Designs tracked chassis, modular payload mounts and sealed hardware for demanding terrain.",
     deliverables: ["All-Terrain Track Assembly", "Armored Chassis", "Modular Payload Bays"],
   },
 ];
@@ -97,52 +97,24 @@ export default function SubsystemsPage() {
   const activeDiv = DIVISIONS.find((d) => d.code === activeCode) || DIVISIONS[0];
   const ActiveIcon = activeDiv.icon;
   
-  const { theme } = useTheme();
-  // Fallback to dark if undefined
-  const isDark = theme === "dark" || !theme;
-
-  // Theme configuration dictionaries
+  // Keep shared colors theme-driven while tabs use a simple active underline.
   const colors = {
-    bg: isDark ? "bg-[#0a0c0a]" : "bg-[#f2efe9]",
-    textPrimary: isDark ? "text-[#e2e8e0]" : "text-[#2d2a25]",
-    textSecondary: isDark ? "text-[#8b9984]" : "text-[#7a7261]",
-    
-    // Layer 1 (Outer shell)
-    layer1Bg: isDark ? "bg-[#101410]" : "bg-[#e8e4db]",
-    layer1Border: isDark ? "border-[#1e261d]" : "border-[#d8d1c1]",
-    
-    // Layer 2 (Inner shell)
-    layer2Bg: isDark ? "bg-[#151a14]" : "bg-[#dfdacd]",
-    layer2Border: isDark ? "border-[#242d22]" : "border-[#c4bbac]",
-    
-    // Accents & Tabs
-    tabActiveBg: isDark ? "bg-[#1c241b]" : "bg-[#d1c9b6]",
-    tabActiveBorder: isDark ? "border-[#364534]" : "border-[#a3977c]",
-    tabInactiveHover: isDark ? "hover:bg-[#121711]" : "hover:bg-[#e3dec8]",
-    
-    // Deliverables tags
-    tagBg: isDark ? "bg-[#1a2119]" : "bg-[#d4cdbd]",
-    tagBorder: isDark ? "border-[#2d3a2c]" : "border-[#bfb7a4]",
+    textPrimary: "text-[var(--ink)]",
+    textSecondary: "text-[var(--muted-ink)]",
   };
 
   return (
     <>
       {/* ── GLOBAL FONT OVERRIDE: IBM PLEX SERIF ── */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
-        html, body, * { font-family: 'IBM Plex Serif', serif; }
-        
-        /* Hide scrollbar for the horizontal tab row */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
-
-      <main className={`mx-auto max-w-[1360px] px-4 pt-6 pb-20 md:px-8 space-y-6 min-h-screen transition-colors duration-500 ${colors.bg}`}>
+      {/* BACKGROUND SLOT: subsystems page placeholder. */}
+      <main data-background-slot="subsystems" className="relative isolate mx-auto max-w-[1360px] min-h-screen px-4 pt-6 pb-20 md:px-8 space-y-6">
+        {/* BACKGROUND MOTIF: circuit paths and signal pulses. */}
+        <SectionAtmosphere variant="subsystems" />
         
         {/* ── HEADER (Centered & Shifted Up) ── */}
         <div className="flex flex-col items-center justify-center space-y-2 pt-2 pb-2">
           <div className="flex items-center gap-3 tracking-[0.15em] uppercase text-[11px]">
-            <span className={`inline-flex items-center px-3 py-1 font-semibold border ${colors.layer1Bg} ${colors.textSecondary} ${colors.layer1Border}`}>
+            <span className="font-bold text-[var(--signal-accent)]">
               05
             </span>
             <span className={`font-semibold tracking-widest ${colors.textSecondary}`}>
@@ -162,17 +134,17 @@ export default function SubsystemsPage() {
 
         {/* ── HORIZONTAL TAB ROW (Centered on Desktop) ── */}
         <div className="relative">
-          <div className={`flex overflow-x-auto hide-scrollbar gap-2 pb-3 border-b md:justify-center ${colors.layer1Border}`}>
+          <div className="theme-rule flex overflow-x-auto hide-scrollbar gap-2 pb-3 border-b md:justify-center">
             {DIVISIONS.map((d) => {
               const isSelected = d.code === activeCode;
               return (
                 <button
                   key={d.code}
                   onClick={() => setActiveCode(d.code)}
-                  className={`flex shrink-0 items-center gap-2.5 px-4 py-2.5 transition-all duration-300 border ${
+                  className={`section-tab flex shrink-0 items-center gap-2.5 px-4 py-2.5 transition-all duration-300 ${
                     isSelected
-                      ? `${colors.tabActiveBg} ${colors.textPrimary} ${colors.tabActiveBorder}`
-                      : `border-transparent bg-transparent ${colors.textSecondary} ${colors.tabInactiveHover}`
+                      ? "is-active"
+                      : ""
                   }`}
                 >
                   <span className="text-[14px] font-medium tracking-wide">
@@ -192,16 +164,15 @@ export default function SubsystemsPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className={`p-2.5 md:p-3.5 border ${colors.layer1Bg} ${colors.layer1Border}`}
+            className="theme-rule border-y py-5 md:py-8"
           >
-            {/* Inner Shell Layer */}
-            <div className={`border overflow-hidden flex flex-col ${colors.layer2Bg} ${colors.layer2Border}`}>
+            <div className="flex flex-col">
               
               {/* Header block */}
-              <div className={`p-6 md:p-8 border-b flex flex-col md:flex-row md:items-center justify-between gap-4 ${colors.layer2Border}`}>
+              <div className="theme-rule p-0 pb-6 md:pb-8 border-b flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-5">
-                  <div className={`flex h-14 w-14 shrink-0 items-center justify-center border ${colors.layer1Bg} ${colors.textPrimary} ${colors.layer1Border}`}>
-                    <ActiveIcon className="h-7 w-7 opacity-80" />
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center text-[var(--blue-accent)]">
+                    <ActiveIcon className="h-8 w-8 opacity-90" />
                   </div>
                   <div>
                     <div className={`text-[11px] tracking-widest uppercase mb-1 font-medium ${colors.textSecondary}`}>
@@ -212,46 +183,47 @@ export default function SubsystemsPage() {
                     </h2>
                   </div>
                 </div>
-                <div className={`px-4 py-2 text-[12px] border shrink-0 tracking-wide font-medium ${colors.layer1Bg} ${colors.textSecondary} ${colors.layer1Border}`}>
+                <div className="text-[12px] shrink-0 tracking-wide font-semibold text-[var(--signal-accent)]">
                   {activeDiv.category}
                 </div>
               </div>
 
               {/* Grid Content: Image Left, Text Right */}
-              <div className="grid lg:grid-cols-[1.2fr_1fr] divide-y lg:divide-y-0 lg:divide-x divide-solid">
+              <div className="grid items-center gap-8 pt-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:pt-8">
                 
                 {/* ── PHOTO PLACEHOLDER ── */}
-                <div className={`w-full min-h-[300px] lg:min-h-[440px] flex flex-col items-center justify-center group transition-colors ${colors.layer1Bg} ${colors.layer1Border}`}>
-                  <IconCamera className={`h-8 w-8 mb-3 opacity-40 group-hover:opacity-80 transition-opacity ${colors.textSecondary}`} />
+                <div className="w-full min-h-[220px] lg:min-h-[360px] flex flex-col items-center justify-center group transition-colors">
+                  <IconCamera className="h-8 w-8 mb-3 text-[var(--blue-accent)] opacity-50 group-hover:opacity-90 transition-opacity" />
                   <p className={`text-sm tracking-wide font-light ${colors.textSecondary}`}>
                     Reserved for {activeDiv.title} Division Photos
                   </p>
                 </div>
 
                 {/* ── TEXT & DELIVERABLES ── */}
-                <div className={`p-8 lg:p-10 flex flex-col justify-center space-y-10 ${colors.layer1Border}`}>
+                <div className="py-4 flex flex-col justify-center space-y-8">
                   
                   {/* Summary */}
                   <div className="space-y-4">
                     <div className={`text-[11px] uppercase tracking-[0.2em] font-bold ${colors.textSecondary}`}>
-                      Operational Summary
+                      Role Summary
                     </div>
-                    <p className={`text-[17px] md:text-[19px] leading-relaxed font-light ${colors.textPrimary}`}>
+                    <p className={`line-clamp-3 text-[15px] md:text-[16px] leading-relaxed ${colors.textPrimary}`}>
                       {activeDiv.summary}
                     </p>
                   </div>
 
                   {/* Deliverables (Tags) */}
-                  <div className="space-y-4 pt-4 border-t border-dashed" style={{ borderColor: 'inherit' }}>
+                  <div className="theme-rule space-y-4 border-t pt-5">
                     <div className={`text-[11px] uppercase tracking-[0.2em] font-bold ${colors.textSecondary}`}>
                       Key Deliverables
                     </div>
-                    <div className="flex flex-wrap gap-2.5">
+                    <div className="flex flex-wrap gap-x-6 gap-y-3">
                       {activeDiv.deliverables.map((del) => (
                         <span
                           key={del}
-                          className={`border px-3.5 py-1.5 text-[13px] font-medium ${colors.tagBg} ${colors.textPrimary} ${colors.tagBorder}`}
+                          className={`inline-flex items-center gap-2 text-[13px] font-medium ${colors.textPrimary}`}
                         >
+                          <span className="h-1.5 w-1.5 rounded-full bg-[var(--field-accent)]" />
                           {del}
                         </span>
                       ))}

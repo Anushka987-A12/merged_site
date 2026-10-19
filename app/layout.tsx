@@ -1,28 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono, Cinzel_Decorative} from "next/font/google";
+import { cookies } from "next/headers";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteShell } from "@/components/site-shell";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const jbm = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jbm",
-});
-
-const metamorphous = Cinzel_Decorative({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-metamorphous",
 });
 
 export const metadata: Metadata = {
@@ -30,15 +15,23 @@ export const metadata: Metadata = {
   description: "R.U.G.V.E.D Systems — Remote Unmanned Ground Vehicular Electronic Defence. Student defence robotics at MIT Manipal (Est. 2016). WALRUS UGV, AI navigation, field robotics.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+type Theme = "dark" | "light";
+
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const savedTheme = (await cookies()).get("rugved-theme")?.value;
+  const initialTheme: Theme | null =
+    savedTheme === "dark" || savedTheme === "light" ? savedTheme : null;
+  const renderedTheme = initialTheme ?? "dark";
+
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${jbm.variable} ${metamorphous.variable} h-full antialiased`}
+      className={openSans.variable + " h-full antialiased " + renderedTheme}
+      data-theme={renderedTheme}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-transparent">
-        <ThemeProvider>
+      <body className="min-h-full flex flex-col bg-[var(--page)]">
+        <ThemeProvider initialTheme={initialTheme}>
           <SiteShell>{children}</SiteShell>
         </ThemeProvider>
       </body>

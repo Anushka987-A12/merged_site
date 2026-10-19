@@ -171,11 +171,8 @@ const SplitFlapText = ({
       }
     };
 
-    clearAnimation();
-
     const firstPhrase = normalizedPhrases[0] || '';
     currentTextRef.current = firstPhrase;
-    setTiles(createTiles(firstPhrase));
 
     if (normalizedPhrases.length <= 1 || typeof window === 'undefined') {
       return clearAnimation;

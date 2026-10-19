@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { IconTerminal, IconCheck, IconCornerDownLeft, IconTrash } from "@tabler/icons-react";
+import { IconTerminal, IconCornerDownLeft, IconTrash } from "@tabler/icons-react";
 
 interface TerminalLine {
   id: string;
@@ -10,7 +10,7 @@ interface TerminalLine {
 
 const INITIAL_LINES: TerminalLine[] = [
   { id: "1", type: "system", text: "RUGVED TACTICAL TELEMETRY CONSOLE [v4.18-PROD]" },
-  { id: "2", type: "system", text: "Node: mit-manipal.rvd.local // Secure Enclave Active" },
+  { id: "2", type: "system", text: "Node: mit-manipal.rvd.local · secure enclave active" },
   { id: "3", type: "system", text: "Type 'help' or click quick queries below to inspect system diagnostics." },
 ];
 
@@ -28,6 +28,7 @@ export const InteractiveTerminal: React.FC = () => {
   const [inputVal, setInputVal] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const lineIdRef = useRef(100);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -39,15 +40,16 @@ export const InteractiveTerminal: React.FC = () => {
     const trimmed = rawCmd.trim().toLowerCase();
     if (!trimmed) return;
 
+    const nextId = () => String(++lineIdRef.current);
     const newLines: TerminalLine[] = [
       ...lines,
-      { id: String(Date.now()), type: "input", text: rawCmd },
+      { id: nextId(), type: "input", text: rawCmd },
     ];
 
     switch (trimmed) {
       case "help":
         newLines.push({
-          id: String(Date.now() + 1),
+          id: nextId(),
           type: "output",
           text: `AVAILABLE COMMANDS:\n  • status      — Run live system diagnostics & node health\n  • walrus      — Print WALRUS 2.0 UGV platform architectural specifications\n  • subsystems  — Query active engineering divisions (TB, MG, EL, RD, AR, ME)\n  • papers      — List IEEE, ICRA & peer-reviewed research publications\n  • coordinates — Get Manipal Base station GPS coordinates\n  • clear       — Clear terminal buffer`,
         });
@@ -56,16 +58,16 @@ export const InteractiveTerminal: React.FC = () => {
       case "status":
       case "sys --health":
         newLines.push({
-          id: String(Date.now() + 1),
+          id: nextId(),
           type: "output",
-          text: `SYSTEM DIAGNOSTICS // ALL SYSTEMS NOMINAL\n  [OK] NVIDIA Jetson AGX Orin — Core Temp 44.2°C | 275 TOPS Active\n  [OK] ROS2 Humble Node Cluster — 18 nodes running (0 errors, 0 dropped frames)\n  [OK] Solid-State LiDAR 360° — Stream stable @ 1.2M pts/sec\n  [OK] FPGA Gunshot Acoustic Array — Armed, microsecond triangulation active\n  [OK] CAN Bus Telemetry — Latency 1.2ms (Zero packet loss)\n  [OK] Power Reserve — 48V LiFePO4 @ 94% State of Charge (5.8h remaining)`,
+          text: `SYSTEM DIAGNOSTICS · ALL SYSTEMS NOMINAL\n  [OK] NVIDIA Jetson AGX Orin — Core temp 44.2°C | 275 TOPS active\n  [OK] ROS2 Humble node cluster — 18 nodes running (0 errors, 0 dropped frames)\n  [OK] Solid-state LiDAR 360° — Stream stable at 1.2M points/sec\n  [OK] FPGA acoustic array — Microsecond triangulation active\n  [OK] CAN bus telemetry — 1.2ms latency, no packet loss\n  [OK] Power reserve — 48V LiFePO4 at 94% charge (5.8h remaining)`,
         });
         break;
 
       case "walrus":
       case "walrus --specs":
         newLines.push({
-          id: String(Date.now() + 1),
+          id: nextId(),
           type: "output",
           text: `PLATFORM: WALRUS 2.0 UGV (Remote Unmanned Ground Vehicular Electronic Defence)\n  • Class: Military-Grade Tactical Field Robotics Platform\n  • Autonomy: Level 4 Autonomous Off-Road Terrain Mapping & Pathfinding\n  • Drivetrain: High-Torque Dual Rubber-Composite Track Assembly\n  • Speed: 22 km/h Max Off-Road | Slope Clearance: 45° Gradient\n  • Payload: 45 kg Modular Quick-Swap (EOD Arm, GPR Mine Array, Drone Scout)\n  • Deployment: Featured at National Defence Expo 2025`,
         });
@@ -74,7 +76,7 @@ export const InteractiveTerminal: React.FC = () => {
       case "subsystems":
       case "divisions":
         newLines.push({
-          id: String(Date.now() + 1),
+          id: nextId(),
           type: "output",
           text: `ACTIVE SUBSYSTEMS [6 DIVISIONS]:\n  [S-01] THE BOARD (TB)      — Strategic directive & operations leadership\n  [S-02] MANAGEMENT (MG)     — Timeline control, logistics & sponsor relations\n  [S-03] ELECTRONICS (EL)    — High-speed PCB design, power distribution & sensors\n  [S-04] RESEARCH (RD)       — Algorithm exploration, grant proposals & patents\n  [S-05] AI & ROBOTICS (AR)  — ROS2, SLAM, reinforcement learning & CV models\n  [S-06] MECHANICAL (ME)     — Chassis CAD, FEA stress analysis & CNC fabrication`,
         });
@@ -83,7 +85,7 @@ export const InteractiveTerminal: React.FC = () => {
       case "papers":
       case "research":
         newLines.push({
-          id: String(Date.now() + 1),
+          id: nextId(),
           type: "output",
           text: `PEER-REVIEWED PUBLICATIONS & PATENTS:\n  [1] Autonomous Terrain Navigation Using Deep AI — IEEE, 2024\n  [2] Optimized Pathfinding in Field UGV Systems — ICRA, 2023\n  [3] Reinforcement Learning for Obstacle Avoidance — Elsevier Robotics Journal\n  [4] AI Terrain Navigation Sensor Architecture — Patent Filed (2024)`,
         });
@@ -91,7 +93,7 @@ export const InteractiveTerminal: React.FC = () => {
 
       case "coordinates":
         newLines.push({
-          id: String(Date.now() + 1),
+          id: nextId(),
           type: "output",
           text: `BASE STATION LOCATION:\n  Manipal Institute of Technology, Karnataka, India\n  Coordinates: 13.347° N, 74.792° E | Elevation: 73m MSL`,
         });
@@ -104,7 +106,7 @@ export const InteractiveTerminal: React.FC = () => {
 
       default:
         newLines.push({
-          id: String(Date.now() + 1),
+          id: nextId(),
           type: "error",
           text: `rvd-sh: command not recognized: '${rawCmd}'. Type 'help' for available commands.`,
         });
@@ -127,7 +129,7 @@ export const InteractiveTerminal: React.FC = () => {
         <div className="flex items-center gap-2 font-mono text-[11px] tracking-wider text-[#c2b8a3]">
           <IconTerminal className="h-4 w-4 text-emerald-400" />
           <span className="font-bold text-[#e8e6dc]">RUGVED CONSOLE</span>
-          <span className="text-[#8b8f6b]">// ttyS0-sim</span>
+          <span className="text-[#8b8f6b]">Terminal simulation</span>
         </div>
 
         <div className="flex items-center gap-2">

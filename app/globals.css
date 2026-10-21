@@ -376,15 +376,6 @@ html.light .floating-dock-item {
   content: "";
   background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--field-accent) 44%, transparent), transparent);
 }
-.timeline-route {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
 .timeline-row { transition: color 320ms ease; }
 .timeline-entry { transition: border-color 360ms ease, color 360ms ease; }
 .timeline-entry { position: relative; z-index: 1; }
@@ -393,28 +384,6 @@ html.light .floating-dock-item {
 }
 .timeline-entry.is-current h3 {
   color: var(--ink);
-}
-.timeline-route-base {
-  fill: none;
-  stroke: color-mix(in srgb, var(--blue-accent) 28%, transparent);
-  stroke-width: 1.2;
-  stroke-dasharray: 3 9;
-}
-.timeline-route-progress {
-  fill: none;
-  stroke: var(--field-accent);
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--field-accent) 46%, transparent));
-}
-.timeline-drone {
-  position: absolute;
-  z-index: 20;
-  width: 90px;
-  height: 110px;
-  transform: translate(-50%, -38%);
-  pointer-events: none;
-  filter: drop-shadow(0 4px 7px color-mix(in srgb, var(--page) 62%, transparent));
 }
 .timeline-drone-art { display: block; width: 100%; height: 100%; overflow: visible; }
 .timeline-drone-shadow { fill: color-mix(in srgb, var(--page) 44%, transparent); }
@@ -831,47 +800,57 @@ html.light [class*="text-blue-"], html.light [class*="text-indigo-"], html.light
 .home-timeline__progress { width: min(100%, 180px); flex-shrink: 0; }
 .home-timeline__track {
   position: relative;
+  width: 100%;
   min-width: 0;
-  padding-top: 18px;
+}
+.timeline-row__column {
+  width: min(680px, 92vw);
+  max-width: 100%;
+  margin-inline: auto;
 }
 .timeline-entry {
   position: relative;
+  z-index: 10;
   border-color: color-mix(in srgb, var(--blue-accent) 22%, transparent);
-  transition: border-color 360ms ease, background-color 360ms ease;
+  padding: 15px 18px 17px;
+  border-top: 1px solid transparent;
+  border-left: 2px solid transparent;
+  transition: border-color 360ms ease, background-color 360ms ease, box-shadow 360ms ease, filter 360ms ease;
 }
 .timeline-entry.is-current {
   border-bottom-color: color-mix(in srgb, var(--signal-accent) 72%, var(--field-accent));
 }
-.timeline-route {
+.timeline-drone-layer {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.timeline-drone-trail {
   position: absolute;
   inset: 0;
-  z-index: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
-  pointer-events: none;
+  mix-blend-mode: screen;
 }
-.timeline-route-base {
-  fill: none;
-  stroke: color-mix(in srgb, var(--blue-accent) 28%, transparent);
-  stroke-width: 1.2;
-  stroke-dasharray: 3 9;
-}
-.timeline-route-progress {
-  fill: none;
+.timeline-drone-trail line {
   stroke: var(--field-accent);
-  stroke-width: 2.2;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--field-accent) 46%, transparent));
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--field-accent) 72%, transparent));
 }
 .timeline-drone {
   position: absolute;
-  z-index: 20;
+  top: 0;
+  left: 0;
+  z-index: 5;
   width: 90px;
   height: 110px;
-  transform: translate(-50%, -38%);
+  transform-origin: center;
+  will-change: transform;
   pointer-events: none;
-  filter: drop-shadow(0 4px 7px color-mix(in srgb, var(--page) 62%, transparent));
+  filter: drop-shadow(0 4px 7px color-mix(in srgb, var(--page) 62%, transparent)) blur(var(--flight-blur, 0px));
 }
 .timeline-drone-art { display: block; width: 100%; height: 100%; overflow: visible; }
 .timeline-drone-shadow { fill: color-mix(in srgb, var(--page) 44%, transparent); }
@@ -1504,17 +1483,22 @@ html.light .forest-sun-rig { opacity: 1; transform: translate3d(0, 0, 0) scale(1
 @keyframes ugv-wheel-roll { to { transform: rotate(360deg); } }
 @keyframes forest-sun-turn { to { transform: rotate(360deg); } }
 
-/* Timeline spotlight path and persistent journey readout */
-.timeline-layout { display: grid; grid-template-columns: minmax(165px, 205px) minmax(0, 1fr); align-items: start; gap: clamp(18px, 3vw, 42px); }
-.timeline-progress-panel { position: sticky; z-index: 30; top: 92px; align-self: start; }
-.timeline-progress-panel__card { padding: 17px 16px 14px; border: 1px solid color-mix(in srgb, var(--blue-accent) 36%, transparent); background: color-mix(in srgb, var(--surface) 91%, transparent); box-shadow: 0 12px 28px rgb(3 17 20 / 14%); backdrop-filter: blur(16px); }
+/* Timeline spotlight flight layer and floating journey HUD */
+.timeline-layout { position: relative; width: 100%; }
+.timeline-progress-panel { position: fixed; z-index: 60; top: 50%; left: 24px; width: min(210px, calc(100vw - 48px)); transform: translateY(-50%); }
+.timeline-progress-panel__card { padding: 17px 16px 14px; border: 1px solid color-mix(in srgb, var(--blue-accent) 36%, transparent); border-radius: 14px; background: color-mix(in srgb, var(--surface) 78%, transparent); box-shadow: 0 12px 28px rgb(3 17 20 / 18%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .timeline-progress-panel__label,
 .timeline-progress-panel__milestone { display: inline-flex; align-items: center; gap: 7px; color: var(--muted-ink); font: 700 9px/1.3 var(--font-open-sans), sans-serif; letter-spacing: .16em; }
 .timeline-progress-panel__label i { width: 6px; height: 6px; border-radius: 50%; background: var(--field-accent); box-shadow: 0 0 10px color-mix(in srgb, var(--field-accent) 76%, transparent); animation: progress-beacon 2s ease-in-out infinite; }
 .timeline-progress-panel__percent { color: var(--ink); font: 700 22px/1 var(--font-open-sans), sans-serif; font-variant-numeric: tabular-nums; }
 .timeline-progress-panel__percent small { margin-left: 2px; color: var(--muted-ink); font-size: 11px; }
-.timeline-progress-panel__bar { height: 3px; margin-top: 13px; overflow: hidden; background: color-mix(in srgb, var(--blue-accent) 25%, transparent); }
-.timeline-progress-panel__bar > div { height: 100%; background: var(--field-accent); box-shadow: 0 0 12px color-mix(in srgb, var(--field-accent) 55%, transparent); }
+.timeline-progress-panel__bar { position: relative; height: 26px; margin-top: 8px; overflow: visible; cursor: ew-resize; touch-action: none; outline: none; }
+.timeline-progress-panel__bar-track,
+.timeline-progress-panel__bar-fill { position: absolute; top: 11px; left: 0; height: 3px; border-radius: 999px; }
+.timeline-progress-panel__bar-track { right: 0; background: color-mix(in srgb, var(--blue-accent) 25%, transparent); }
+.timeline-progress-panel__bar-fill { background: var(--field-accent); box-shadow: 0 0 12px color-mix(in srgb, var(--field-accent) 55%, transparent); }
+.timeline-progress-panel__bar-thumb { position: absolute; top: 7px; width: 11px; height: 11px; border: 2px solid var(--surface); border-radius: 50%; background: var(--field-accent); box-shadow: 0 0 12px color-mix(in srgb, var(--field-accent) 58%, transparent); transform: translateX(-50%); }
+.timeline-progress-panel__bar:focus-visible .timeline-progress-panel__bar-thumb { outline: 2px solid var(--signal-accent); outline-offset: 3px; }
 .timeline-progress-panel__ticks { display: flex; justify-content: space-between; margin-top: 6px; color: var(--muted-ink); font: 500 8px/1.2 var(--font-open-sans), sans-serif; }
 .timeline-progress-panel__milestone { display: flex; justify-content: space-between; width: 100%; margin-top: 14px; padding-top: 11px; border-top: 1px solid color-mix(in srgb, var(--blue-accent) 24%, transparent); }
 .timeline-progress-panel__milestone strong { color: var(--ink); font: 700 9px/1.3 var(--font-open-sans), sans-serif; letter-spacing: .1em; }
@@ -1523,7 +1507,16 @@ html.light .forest-sun-rig { opacity: 1; transform: translate3d(0, 0, 0) scale(1
 @keyframes progress-beacon { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
 .timeline-entry.is-current {
   border-top: 1px solid color-mix(in srgb, var(--signal-accent) 62%, transparent);
+  border-left: 2px solid var(--signal-accent);
+  background: color-mix(in srgb, var(--surface-raised) 86%, var(--field-accent) 14%);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--page) 26%, transparent), inset 0 0 28px color-mix(in srgb, var(--field-accent) 5%, transparent);
 }
+.timeline-entry__aura { position: absolute; z-index: 0; inset: -24px; border-radius: 28px; pointer-events: none; background: radial-gradient(ellipse at center, color-mix(in srgb, var(--blue-accent) 21%, transparent), color-mix(in srgb, var(--field-accent) 9%, transparent) 48%, transparent 74%); filter: blur(18px); }
+.timeline-entry__content { position: relative; z-index: 1; }
+.timeline-entry.is-inactive { filter: grayscale(.62); }
+.timeline-entry.is-current .timeline-entry__title { color: var(--signal-accent); }
+.timeline-entry__detail { color: var(--muted-ink); font-size: 14px; font-weight: 500; line-height: 1.65; }
+.timeline-entry__detail strong { color: var(--signal-accent); font-size: 15px; font-weight: 750; }
 
 /* Dedicated publication page */
 .research-page { padding-top: clamp(36px, 6vw, 72px); }
@@ -1535,10 +1528,19 @@ html.light .forest-sun-rig { opacity: 1; transform: translate3d(0, 0, 0) scale(1
 .research-page__note a { color: var(--field-accent); font-weight: 700; }
 
 @media (max-width: 1023px) {
-  .timeline-layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .timeline-progress-panel { top: 72px; margin-bottom: 2px; }
-  .timeline-progress-panel__card { max-width: 460px; margin-inline: auto; padding: 11px 15px; }
-  .timeline-progress-panel__milestone { margin-top: 9px; padding-top: 8px; }
+  .timeline-progress-panel { left: 12px; top: auto; bottom: 12px; width: min(390px, calc(100vw - 24px)); transform: none; }
+  .timeline-progress-panel__card { display: grid; grid-template-columns: auto auto minmax(64px, 1fr) auto; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 999px; }
+  .timeline-progress-panel__card > div:first-child { display: contents; }
+  .timeline-progress-panel__label { font-size: 8px; white-space: nowrap; }
+  .timeline-progress-panel__percent { font-size: 15px; white-space: nowrap; }
+  .timeline-progress-panel__bar { height: 18px; margin-top: 0; }
+  .timeline-progress-panel__bar-track,
+  .timeline-progress-panel__bar-fill { top: 8px; }
+  .timeline-progress-panel__bar-thumb { top: 4px; }
+  .timeline-progress-panel__ticks { display: none; }
+  .timeline-progress-panel__milestone { width: auto; margin: 0; padding: 0; border: 0; white-space: nowrap; }
+  .timeline-progress-panel__milestone > span { display: none; }
+  .timeline-progress-panel__milestone strong { font-size: 8px; }
   .forest-ugv {
     --ugv-track-clearance: min(11.33vw, 83.3px);
     --ugv-ground-bottom: calc(16% - min(11.5vw, 84.5px));
@@ -1588,6 +1590,10 @@ html.light .home-hero__index { color: color-mix(in srgb, var(--ink) 75%, transpa
   .forest-sun-rig__rays,
   .timeline-progress-panel__label i,
   .timeline-drone-propeller-spin { animation: none !important; }
+  .timeline-entry,
+  .timeline-drone { transition: none !important; }
+  .timeline-entry__aura { display: none !important; }
+  .timeline-drone-trail { display: none !important; }
   .forest-celestial { transition: none !important; }
 }
 @media (min-aspect-ratio: 33/20) {

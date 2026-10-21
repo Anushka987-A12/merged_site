@@ -1,13 +1,9 @@
 "use client";
 import React from "react";
-import { useTheme } from "@/components/theme-provider";
 
 export function DefenseBackground() {
-  const { theme } = useTheme();
-  const isLight = theme === "light";
-
   return (
-    <div className={`pointer-events-none fixed inset-0 -z-10 overflow-hidden ${isLight ? "light-mode" : ""}`}>
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <style>{`
         :root {
           --void: #050806;
@@ -45,9 +41,7 @@ export function DefenseBackground() {
           transition: background-color var(--transition-duration) var(--transition-timing);
         }
 
-        .light-mode .hero-wrapper {
-          background: #326f91;
-        }
+
 
         .hero-wrapper svg {
           width: 100%;
@@ -62,9 +56,7 @@ export function DefenseBackground() {
           transform-origin: 1020px 560px;
         }
 
-        .light-mode .sun-rig {
-          transform: translateY(-335px);
-        }
+
 
         .sun-disc-core {
           fill: #FFC988;
@@ -74,22 +66,14 @@ export function DefenseBackground() {
                       opacity var(--transition-duration) var(--transition-timing);
         }
 
-        .light-mode .sun-disc-core {
-          fill: var(--desert-sun-core);
-          r: 64;
-          opacity: 1;
-          filter: drop-shadow(0 0 30px rgba(255, 255, 230, 0.95));
-        }
+
 
         .sun-halo-glow {
           transition: opacity var(--transition-duration) var(--transition-timing),
                       r var(--transition-duration) var(--transition-timing);
         }
 
-        .light-mode .sun-halo-glow {
-          r: 380;
-          opacity: 0.95;
-        }
+
 
         .sun-morning-rays {
           opacity: 0;
@@ -99,10 +83,7 @@ export function DefenseBackground() {
           pointer-events: none;
         }
 
-        .light-mode .sun-morning-rays {
-          opacity: 0.42;
-          animation: rotateRays 120s linear infinite;
-        }
+
 
         @keyframes rotateRays {
           from { transform: rotate(0deg); }
@@ -116,9 +97,7 @@ export function DefenseBackground() {
           mix-blend-mode: screen;
         }
 
-        .light-mode .desert-morning-bloom {
-          opacity: 0.45;
-        }
+
 
         /* SKY LAYERS CROSS-FADE */
         .sky-night-layer,
@@ -129,15 +108,15 @@ export function DefenseBackground() {
         .sky-night-layer { opacity: 1; }
         .sky-day-layer { opacity: 0; }
 
-        .light-mode .sky-night-layer { opacity: 0; }
-        .light-mode .sky-day-layer { opacity: 1; }
+
+
 
         .night-starfield {
           opacity: 1;
           transition: opacity calc(var(--transition-duration) * 0.75) var(--transition-timing);
         }
 
-        .light-mode .night-starfield { opacity: 0; }
+
 
         /* DESERT TERRAIN COLOR TRANSITIONS */
         .terrain-bg-path {
@@ -146,10 +125,7 @@ export function DefenseBackground() {
           transition: fill var(--transition-duration) var(--transition-timing),
                       stroke var(--transition-duration) var(--transition-timing);
         }
-        .light-mode .terrain-bg-path {
-          fill: var(--desert-sandstone);
-          stroke: #C28260;
-        }
+
 
         .terrain-mg-path {
           fill: #132720;
@@ -157,22 +133,19 @@ export function DefenseBackground() {
           transition: fill var(--transition-duration) var(--transition-timing),
                       stroke var(--transition-duration) var(--transition-timing);
         }
-        .light-mode .terrain-mg-path {
-          fill: var(--desert-sand);
-          stroke: var(--desert-ridge);
-        }
+
 
         .terrain-fg-rect {
           fill: #080D09;
           transition: fill var(--transition-duration) var(--transition-timing);
         }
-        .light-mode .terrain-fg-rect { fill: var(--desert-shadow); }
+
 
         .terrain-fg-ridge {
           fill: #172C1E;
           transition: fill var(--transition-duration) var(--transition-timing);
         }
-        .light-mode .terrain-fg-ridge { fill: var(--desert-ground); }
+
 
         .fog-haze-band ellipse {
           fill: var(--steel-blue);
@@ -182,24 +155,24 @@ export function DefenseBackground() {
           opacity: 0.16;
           transition: opacity var(--transition-duration) var(--transition-timing);
         }
-        .light-mode .fog-haze-band ellipse { fill: var(--desert-dust); }
-        .light-mode .scroll-fog { opacity: 0.32; }
+
+
 
         .tower-structural-lines line {
           stroke: #1F3730;
           transition: stroke var(--transition-duration) var(--transition-timing);
         }
-        .light-mode .tower-structural-lines line { stroke: #9C7E69; }
+
 
         /* TACTICAL DRONES & UGV */
         .drone-body-dark { fill: #0D1812; transition: fill var(--transition-duration) var(--transition-timing); }
         .drone-body-light { fill: #172C1E; transition: fill var(--transition-duration) var(--transition-timing); }
         .drone-wing-line { stroke: #1A3021; transition: stroke var(--transition-duration) var(--transition-timing); }
-        .light-mode .drone-body-dark { fill: #473B2F; }
-        .light-mode .drone-body-light { fill: #705B46; }
-        .light-mode .drone-wing-line { stroke: #8C7257; }
 
-        /* UGV maintains its darkish green color profile across both modes */
+
+
+
+        /* Keep the UGV on its dark green color profile. */
         .ugv-chassis-lower { fill: #0F1A12; }
         .ugv-armor-mid { fill: #1A3021; }
         .ugv-armor-plate { fill: #24422D; }
@@ -214,9 +187,9 @@ export function DefenseBackground() {
         .subterranean-radar-feed text { fill: var(--phosphor); transition: fill var(--transition-duration) var(--transition-timing); }
         .subterranean-radar-pulse { stroke: var(--phosphor); transition: stroke var(--transition-duration) var(--transition-timing); }
 
-        .light-mode .subterranean-radar-feed { stroke: var(--desert-hud); }
-        .light-mode .subterranean-radar-feed text { fill: var(--desert-hud); }
-        .light-mode .subterranean-radar-pulse { stroke: var(--desert-hud); }
+
+
+
 
         /* MATHEMATICAL PARALLAX LOOPING KEYFRAMES */
         @keyframes scrollLeft {
@@ -323,9 +296,7 @@ export function DefenseBackground() {
           transition: box-shadow var(--transition-duration) var(--transition-timing);
         }
 
-        .light-mode .vignette {
-          box-shadow: inset 0 0 120px rgba(90, 45, 15, 0.35);
-        }
+
 
         .scanlines {
           position: absolute;
@@ -337,9 +308,7 @@ export function DefenseBackground() {
           transition: opacity var(--transition-duration) var(--transition-timing);
         }
 
-        .light-mode .scanlines {
-          opacity: 0.55;
-        }
+
       `}</style>
 
       <div className="hero-wrapper">

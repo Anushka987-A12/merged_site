@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useTheme } from "@/components/theme-provider";
 
 type RadarObstacle = { id: number; x: number; y: number; size: number; kind: number; delay: number };
 type MotionProfile = { duration: number; keyTimes: string; keyPoints: string };
@@ -183,8 +182,6 @@ function RadarReturns() {
 }
 
 export function DefenseBackground() {
-  const { theme } = useTheme();
-  const isLight = theme === "light";
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
@@ -197,9 +194,7 @@ export function DefenseBackground() {
 
   return (
     <div
-      className={`pointer-events-none absolute inset-0 z-0 overflow-hidden ${
-        isLight ? "light-mode" : ""
-      }`}
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
       <style>{`
         :root {
@@ -210,7 +205,7 @@ export function DefenseBackground() {
           --ember: #e36a49;
           --sweep: 3.8s;
         }
-        .light-mode { --hud: #a7f0dd; --amber: #9cac54; --ember: #97cd97; }
+
 
         .hero-wrapper {
           position: relative;
@@ -220,7 +215,7 @@ export function DefenseBackground() {
           overflow: hidden;
           transition: background-color var(--td) var(--tt);
         }
-        .light-mode .hero-wrapper { background: #345c32; }
+
         .hero-wrapper::after {
           content: "";
           position: absolute;
@@ -244,20 +239,20 @@ export function DefenseBackground() {
           transition: opacity var(--td) var(--tt);
         }
 
-        .n-sky   { opacity: 1; }    .light-mode .n-sky   { opacity: 0; }
-        .n-ember { opacity: 0.65; } .light-mode .n-ember { opacity: 0; }
+        .n-sky   { opacity: 1; }
+        .n-ember { opacity: 0.65; }
         .n-haze  { opacity: 0; }
-        .n-grade { opacity: 0.18; } .light-mode .n-grade { opacity: 0; }
+        .n-grade { opacity: 0.18; }
 
-        .d-sky   { opacity: 0; } .light-mode .d-sky   { opacity: 1; }
+        .d-sky   { opacity: 0; }
         .d-haze  { opacity: 0; }
-        .d-grade { opacity: 0; } .light-mode .d-grade { opacity: 0.18; }
-        .d-bloom { opacity: 0; } .light-mode .d-bloom { opacity: 0.06; }
-        .d-cloud { opacity: 0; } .light-mode .d-cloud { opacity: 0.12; }
-        .d-bird  { opacity: 0; } .light-mode .d-bird  { opacity: 0.28; }
+        .d-grade { opacity: 0; }
+        .d-bloom { opacity: 0; }
+        .d-cloud { opacity: 0; }
+        .d-bird  { opacity: 0; }
 
         .starfield { opacity: 1; transition: opacity calc(var(--td) * 0.6) var(--tt); }
-        .light-mode .starfield { opacity: 0.04; }
+
 
         /* ── CELESTIAL RIG ──────────────────────────────────────── */
         .moon-rig {
@@ -266,19 +261,19 @@ export function DefenseBackground() {
           opacity: 1;
           transition: transform var(--td) var(--tt), opacity var(--td) var(--tt);
         }
-        .light-mode .moon-rig { transform: translate3d(520px, -70px, 0) scale(0.72); opacity: 0.28; }
+
 
         .sun-rig {
           opacity: 0;
           transition: opacity var(--td) var(--tt);
         }
-        .light-mode .sun-rig { opacity: 0.88; }
+
 
         .sun-rays {
           opacity: 0;
           transition: opacity var(--td) var(--tt);
         }
-        .light-mode .sun-rays { opacity: 0.18; }
+
 
         .lake-ripple { animation: ripple-drift 24s linear infinite; }
         .lake-ripple:nth-of-type(even) { animation-direction: reverse; animation-duration: 31s; }
@@ -308,46 +303,46 @@ export function DefenseBackground() {
           opacity: 0.72;
           transition: stroke var(--td) var(--tt), opacity var(--td) var(--tt);
         }
-        .light-mode .crest { stroke: #0f6e5e; opacity: 0.82; }
+
 
         .creek-water { opacity: 0.98; transition: opacity var(--td) var(--tt); }
-        .light-mode .creek-water { opacity: 1; }
+
         .creek-edge { fill: none; stroke: var(--shoreline); stroke-width: 9; stroke-linejoin: round; opacity: 0.95; transition: stroke var(--td) var(--tt); }
         .creek-ripple { fill: none; stroke: #b2fff0; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 12 25; opacity: 0.58; animation: creek-flow 10s linear infinite; }
         .creek-ripple:nth-child(2) { animation-duration: 13s; animation-delay: -4s; opacity: 0.42; }
         .creek-ripple:nth-child(3) { animation-duration: 16s; animation-delay: -8s; opacity: 0.35; }
-        .light-mode .creek-ripple { stroke: #e6fff0; opacity: 0.65; }
+
         @keyframes creek-flow { to { stroke-dashoffset: -148; } }
         .land-texture { fill: none; stroke: var(--land-detail); stroke-width: 2.2; opacity: 0.55; transition: stroke var(--td) var(--tt); }
         .terrain-facet { fill: #d5f1d4; opacity: 0.14; }
-        .light-mode .terrain-facet { fill: #33594e; opacity: 0.14; }
+
         .terrain-strata { fill: none; stroke: #8ee9cb; stroke-width: 1.6; opacity: 0.42; }
-        .light-mode .terrain-strata { stroke: #2a6f62; opacity: 0.38; }
+
         .trail-track { fill: none; stroke: #9fbaa0; stroke-width: 2; stroke-dasharray: 22 30 8 36; opacity: 0.28; }
-        .light-mode .trail-track { stroke: #3e684a; opacity: 0.35; }
+
         .shore-rock { fill: #092f34; stroke: #5ca69a; stroke-width: 1.3; }
         .shore-rock-highlight { fill: #8ee3c8; opacity: 0.45; }
-        .light-mode .shore-rock { fill: #234641; stroke: #5c8470; }
-        .light-mode .shore-rock-highlight { fill: #e4d5a8; opacity: 0.5; }
+
+
         .shore-grass { fill: none; stroke: #7bc49e; stroke-width: 2.2; stroke-linecap: round; opacity: 0.68; }
-        .light-mode .shore-grass { stroke: #2c6e4e; opacity: 0.72; }
+
         .lake-glint { fill: none; stroke: #e6fffa; stroke-linecap: round; opacity: 0.65; }
-        .light-mode .lake-glint { stroke: #0b4a42; opacity: 0.7; }
+
         .firefly { fill: var(--amber); opacity: 0.35; transform-box: fill-box; transform-origin: center; animation: firefly-pulse 6s ease-in-out infinite; }
         .firefly:nth-child(2n) { animation-delay: -2.4s; }
         .firefly:nth-child(3n) { animation-delay: -4.2s; }
         @keyframes firefly-pulse { 0%, 100% { opacity: .2; transform: scale(.85); } 50% { opacity: .9; transform: scale(1.4); } }
         .pine-far { fill: #0b494d; opacity: 0.95; }
         .pine-near { fill: #052a2e; opacity: 1; }
-        .light-mode .pine-far { fill: #1c6b68; opacity: 0.95; }
-        .light-mode .pine-near { fill: #114245; opacity: 1; }
+
+
 
         .scoop {
           fill: #000000;
           opacity: 0.16;
           transition: fill var(--td) var(--tt), opacity var(--td) var(--tt);
         }
-        .light-mode .scoop { fill: #104e55; opacity: 0.14; }
+
 
         /* ── VEHICLES ───────────────────────────────────────────── */
         .beam, .spot {
@@ -358,10 +353,7 @@ export function DefenseBackground() {
         .spot        { opacity: 0.24; }
         .searchlight { opacity: 0.14; }
         .footprint   { opacity: 0.08; }
-        .light-mode .beam,
-        .light-mode .spot,
-        .light-mode .searchlight,
-        .light-mode .footprint { opacity: 0; }
+
 
         .hull-1, .hull-2, .hull-3, .hull-line {
           transition: fill var(--td) var(--tt), stroke var(--td) var(--tt);
@@ -371,10 +363,10 @@ export function DefenseBackground() {
         .hull-3    { fill: #29442e; stroke: #aed099; stroke-width: 1; stroke-linejoin: round; }
         .hull-line { stroke: #bde0a4; stroke-width: 1.6; }
 
-        .light-mode .hull-1    { fill: #48281c; stroke: #331a12; }
-        .light-mode .hull-2    { fill: #6b3c28; stroke: #45241a; }
-        .light-mode .hull-3    { fill: #8f5537; stroke: #5a2f20; }
-        .light-mode .hull-line { stroke: #b0764f; }
+
+
+
+
 
         .rim-light {
           stroke: #5de4ad;
@@ -382,7 +374,7 @@ export function DefenseBackground() {
           opacity: 0.65;
           transition: stroke var(--td) var(--tt), opacity var(--td) var(--tt);
         }
-        .light-mode .rim-light { stroke: #97cd97; opacity: 0.85; }
+
 
         .hud {
           font-family: var(--font-open-sans), sans-serif;
@@ -393,13 +385,13 @@ export function DefenseBackground() {
           opacity: 0.95;
           transition: fill var(--td) var(--tt), opacity var(--td) var(--tt);
         }
-        .light-mode .hud { fill: #a7f0dd; opacity: 0.98; }
+
 
         /* ── PARALLAX ───────────────────────────────────────────── */
         .scroll-drones { filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45)); }
-        .light-mode .scroll-drones { filter: drop-shadow(0 3px 4px rgba(35, 54, 37, 0.28)); }
+
         .radar-return { fill: none; stroke: var(--hud); stroke-width: 1.8; opacity: 0; animation: radar-blip 4.8s ease-out infinite; }
-        .light-mode .radar-return { stroke: #1e6847; }
+
         @keyframes radar-blip { 0% { opacity: 0; } 18% { opacity: 0.8; } 72% { opacity: 0.18; } 100% { opacity: 0; } }
         @keyframes blink  { 50% { opacity: 0.65; } }
         @keyframes strobe { 0%, 92%, 100% { opacity: 0.1; } 96% { opacity: 0.75; } }
@@ -413,13 +405,13 @@ export function DefenseBackground() {
 
         .sat-drift { opacity: 0.5; }
         .ugv-anim { filter: drop-shadow(0 5px 4px rgba(0,0,0,0.42)); }
-        .light-mode .ugv-anim { filter: drop-shadow(0 7px 5px rgba(10,35,32,0.4)) drop-shadow(0 0 6px rgba(35,115,75,0.2)); }
+
         .ugv-shadow { fill: #06191c; opacity: 0.46; }
-        .light-mode .ugv-shadow { fill: #183c36; opacity: 0.28; }
+
         .radar-ring { fill: none; stroke: var(--hud); stroke-width: 1.25; stroke-dasharray: 4 7; opacity: 0; transform-box: fill-box; transform-origin: center; animation: radar-scan 5.6s ease-out infinite; }
         .radar-ring:nth-child(2) { animation-delay: -2.8s; }
         @keyframes radar-scan { 0% { opacity: .46; transform: scale(.08); } 75%, 100% { opacity: 0; transform: scale(1); } }
-        .light-mode .radar-ring { stroke: #2b8268; }
+
 
         @keyframes wheel { to { transform: rotate(360deg); } }
         .wheel { animation: wheel 1.1s linear infinite; }
@@ -431,7 +423,7 @@ export function DefenseBackground() {
         .mote-b { animation: mote-b 3.4s ease-out infinite 0.6s; }
         .mote-c { animation: mote-c 2.1s ease-out infinite 1.3s; }
         .mote   { fill: var(--ember); transition: fill var(--td) var(--tt); }
-        .light-mode .mote { fill: #ffd9a8; }
+
 
         @media (prefers-reduced-motion: reduce) {
           .hero-wrapper * { animation: none !important; }
@@ -444,11 +436,11 @@ export function DefenseBackground() {
           viewBox="0 0 1920 1080"
           preserveAspectRatio="xMidYMid slice"
           style={{
-            "--terrain-bg": isLight ? "#51aaa4" : "#11616a",
-            "--terrain-mg": isLight ? "#267b81" : "#0b424b",
-            "--terrain-fg": isLight ? "#164b52" : "#082d35",
-            "--shoreline": isLight ? "#17484b" : "#0b343b",
-            "--land-detail": isLight ? "#76c5af" : "#397e82",
+            "--terrain-bg": "#11616a",
+            "--terrain-mg": "#0b424b",
+            "--terrain-fg": "#082d35",
+            "--shoreline": "#0b343b",
+            "--land-detail": "#397e82",
           } as React.CSSProperties}
         >
           <defs>

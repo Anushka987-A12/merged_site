@@ -128,50 +128,6 @@
   --sidebar-ring: var(--field-accent);
 }
 
-html.light {
-  color-scheme: light;
-  --page: #345c32;
-  --surface: #3f663b;
-  --surface-raised: #496f44;
-  --ink: #edf8ed;
-  --muted-ink: #a7f0dd;
-  --field-accent: #a7f0dd;
-  --blue-accent: #97cd97;
-  --signal-accent: #f2dd63;
-  --lime-accent: #9cac54;
-  --background: #345c32;
-  --foreground: #edf8ed;
-  --card: #3f663b;
-  --card-foreground: #edf8ed;
-  --popover: #3f663b;
-  --popover-foreground: #edf8ed;
-  --primary: #9cac54;
-  --primary-foreground: #203d22;
-  --secondary: #496f44;
-  --secondary-foreground: #edf8ed;
-  --muted: #496f44;
-  --muted-foreground: #a7f0dd;
-  --accent: #9cac54;
-  --accent-foreground: #203d22;
-  --destructive: #d86b55;
-  --border: #668352;
-  --input: #668352;
-  --ring: #a7f0dd;
-  --chart-1: #a7f0dd;
-  --chart-2: #97cd97;
-  --chart-3: #9cac54;
-  --chart-4: #668352;
-  --chart-5: #345c32;
-  --sidebar: #3f663b;
-  --sidebar-foreground: #edf8ed;
-  --sidebar-primary: #9cac54;
-  --sidebar-primary-foreground: #203d22;
-  --sidebar-accent: #496f44;
-  --sidebar-accent-foreground: #edf8ed;
-  --sidebar-border: #668352;
-  --sidebar-ring: #a7f0dd;
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -209,76 +165,14 @@ html.light {
     background: var(--signal-accent);
   }
 
-  /* Light mode adapts tactical utilities to the forest green palette. */
-  html.light body {
-    background: var(--page) !important;
-    color: var(--ink) !important;
-  }
-  html.light ::-webkit-scrollbar-track {
-    background: var(--page);
-  }
-  html.light ::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--field-accent) 30%, transparent);
-  }
-  html.light .bg-\[\#070a07\] { background-color: var(--surface) !important; }
-  html.light .bg-\[\#070a07\]\/70,
-  html.light .bg-\[\#070a07\]\/75,
-  html.light .bg-\[\#070a07\]\/85,
-  html.light .bg-\[\#0f120f\]\/70,
-  html.light .bg-\[\#0f120f\]\/60,
-  html.light .bg-\[\#111410\]\/70,
-  html.light .bg-\[\#080a07\]\/60,
-  html.light .bg-black\/30,
-  html.light .bg-black\/20,
-  html.light .bg-black\/40,
-  html.light .bg-black\/50 { background-color: var(--surface-raised) !important; }
-  html.light .bg-\[\#111410\],
-  html.light .bg-\[\#080a07\],
-  html.light .bg-\[\#0f120f\] { background-color: var(--surface) !important; }
-  html.light .text-\[\#e8e6dc\] { color: #1a1d14 !important; }
-  html.light .text-\[\#f2efe6\] { color: #1a1d14 !important; }
-  html.light .text-\[\#8b8f6b\] { color: var(--muted-ink) !important; }
-  html.light .text-\[\#111410\] { color: #203d22 !important; }
-  html.light .border-\[\#c2b8a3\]\/10 { border-color: rgba(151,205,151,0.18) !important; }
-  html.light .border-\[\#c2b8a3\]\/15 { border-color: rgba(151,205,151,0.24) !important; }
-  html.light .border-\[\#c2b8a3\]\/20 { border-color: rgba(151,205,151,0.3) !important; }
-  html.light .border-\[\#c2b8a3\]\/30 { border-color: rgba(151,205,151,0.36) !important; }
-  html.light .border-\[\#8b8f6b\]\/20 { border-color: rgba(167,240,221,0.22) !important; }
-  html.light .border-\[\#8b8f6b\]\/10 { border-color: rgba(167,240,221,0.15) !important; }
-  html.light .bg-\[\#c2b8a3\] { background-color: var(--lime-accent) !important; }
-  html.light .bg-\[\#c2b8a3\]\/10 { background-color: rgba(167,240,221,0.1) !important; }
-  html.light .bg-\[\#8b8f6b\]\/10 { background-color: rgba(167,240,221,0.12) !important; }
-  html.light .from-black\/40 { --tw-gradient-from: rgba(52,92,50,0.2) !important; }
-  html.light .text-white,
-  html.light .text-zinc-100,
-  html.light .text-zinc-200,
-  html.light .text-zinc-300,
-  html.light .text-gray-100,
-  html.light .text-gray-200 { color: var(--ink) !important; }
-  html.light .text-zinc-400,
-  html.light .text-zinc-500,
-  html.light .text-zinc-600,
-  html.light .text-gray-400,
-  html.light .text-gray-500 { color: var(--muted-ink) !important; }
-  html.light .text-emerald-300,
-  html.light .text-emerald-400 { color: var(--field-accent) !important; }
-  html.light .text-amber-300,
-  html.light .text-amber-400 { color: var(--signal-accent) !important; }
 }
 
-/* Amber selection, focus and hover accents stay legible in both themes. */
+/* Amber selection, focus and hover accents stay legible. */
 ::selection { background: color-mix(in srgb, var(--signal-accent) 48%, transparent); color: var(--ink); }
-html.light [class*="text-[#8b8f6b]"] { color: var(--muted-ink) !important; }
-html.light [class*="text-[#e8e6dc]"],
-html.light [class*="text-[#f2efe6]"] { color: var(--ink) !important; }
-html.light [class*="text-emerald-"],
-html.light [class*="text-green-"] { color: var(--field-accent) !important; }
-html.light [class*="bg-emerald-"],
-html.light [class*="bg-green-"] { background-color: var(--page) !important; }
-html:not(.light) .text-zinc-600,
-html:not(.light) .text-zinc-700,
-html:not(.light) .text-gray-600,
-html:not(.light) .text-gray-700 { color: var(--muted-ink) !important; }
+html.dark .text-zinc-600,
+html.dark .text-zinc-700,
+html.dark .text-gray-600,
+html.dark .text-gray-700 { color: var(--muted-ink) !important; }
 a:hover:not([class*="bg-"]),
 button:hover:not([class*="bg-"]),
 [role="button"]:hover:not([class*="bg-"]) { color: var(--signal-accent); }
@@ -289,12 +183,6 @@ a:hover, button:hover, [role="button"]:hover { border-color: color-mix(in srgb, 
 }
 input::placeholder,
 textarea::placeholder { color: var(--muted-ink) !important; opacity: 0.88; }
-html.light .bg-\[\#0a0e0b\],
-html.light .bg-\[\#0c100d\],
-html.light .bg-\[\#0d1210\],
-html.light .bg-\[\#0b0b12\] { background-color: var(--surface) !important; }
-html.light .section-atmosphere { opacity: 0.68; }
-
 .floating-dock {
   background-color: rgb(8 15 11 / 44%) !important;
   border-color: rgb(145 230 169 / 26%) !important;
@@ -307,15 +195,6 @@ html.light .section-atmosphere { opacity: 0.68; }
   -webkit-backdrop-filter: blur(12px) !important;
   backdrop-filter: blur(12px) !important;
 }
-html.light .floating-dock {
-  background-color: color-mix(in srgb, var(--surface) 78%, transparent) !important;
-  border-color: color-mix(in srgb, var(--field-accent) 25%, transparent) !important;
-}
-html.light .floating-dock-item {
-  background-color: color-mix(in srgb, var(--surface) 62%, transparent) !important;
-  border-color: color-mix(in srgb, var(--field-accent) 20%, transparent) !important;
-}
-
 .site-header {
   background: color-mix(in srgb, var(--page) 88%, transparent);
   border-bottom: 1px solid color-mix(in srgb, var(--field-accent) 22%, transparent);
@@ -353,15 +232,6 @@ html.light .floating-dock-item {
   background: color-mix(in srgb, var(--surface-raised) 62%, transparent);
 }
 .site-live-time { color: var(--ink); }
-.site-theme-toggle {
-  border: 1px solid color-mix(in srgb, var(--field-accent) 32%, transparent);
-  background: color-mix(in srgb, var(--surface-raised) 64%, transparent);
-  color: var(--signal-accent);
-}
-.site-theme-toggle:hover {
-  border-color: var(--signal-accent);
-  background: color-mix(in srgb, var(--signal-accent) 12%, var(--surface));
-}
 .section-tab {
   color: var(--muted-ink);
   border-bottom: 2px solid transparent;
@@ -454,23 +324,6 @@ html.dark [class*="text-zinc-4"], html.dark [class*="text-zinc-5"], html.dark [c
 html.dark [class*="text-gray-4"], html.dark [class*="text-gray-5"], html.dark [class*="text-gray-6"] {
   color: var(--muted-ink) !important;
 }
-html.light [class*="text-zinc-3"], html.light [class*="text-zinc-4"], html.light [class*="text-zinc-5"], html.light [class*="text-zinc-6"],
-html.light [class*="text-gray-3"], html.light [class*="text-gray-4"], html.light [class*="text-gray-5"], html.light [class*="text-gray-6"] {
-  color: var(--muted-ink) !important;
-}
-html.light [class*="text-cyan-"], html.light [class*="text-sky-"], html.light [class*="text-teal-"] {
-  color: var(--field-accent) !important;
-}
-html.light [class*="text-amber-"], html.light [class*="text-orange-"], html.light [class*="text-yellow-"] {
-  color: var(--signal-accent) !important;
-}
-html.light [class*="text-emerald-"], html.light [class*="text-green-"], html.light [class*="text-lime-"] {
-  color: var(--field-accent) !important;
-}
-html.light [class*="text-blue-"], html.light [class*="text-indigo-"], html.light [class*="text-violet-"], html.light [class*="text-purple-"] {
-  color: var(--signal-accent) !important;
-}
-
 /* Each route gets its own low-motion tactical atmosphere behind the content. */
 .section-atmosphere {
   position: fixed;
@@ -1416,24 +1269,6 @@ html.light [class*="text-blue-"], html.light [class*="text-indigo-"], html.light
 .forest-moon-rig { opacity: .94; }
 .forest-sun-rig { opacity: 0; transform: translate3d(0, 40px, 0) scale(.82); }
 .forest-sun-rig__rays { transform-box: fill-box; transform-origin: center; animation: forest-sun-turn 90s linear infinite; }
-html.light .forest-mission-scene {
-  --forest-sky-top: #d9edf2;
-  --forest-sky-mid: #bfd9d8;
-  --forest-sky-horizon: #a9c78c;
-  --forest-range-far: #97cd97;
-  --forest-range-near-top: #9cac54;
-  --forest-range-near-deep: #345c32;
-  --forest-lake-top: #a7f0dd;
-  --forest-lake-deep: #345c32;
-  --forest-foreground-top: #617b45;
-  --forest-foreground-deep: #345c32;
-  --forest-dirt-track: #9cac54;
-  --forest-dirt-edge: #97cd97;
-  --forest-pine-near: #345c32;
-}
-html.light .forest-mission-scene__stars { opacity: 0; }
-html.light .forest-moon-rig { opacity: 0; transform: translate3d(-230px, 80px, 0) scale(.58); }
-html.light .forest-sun-rig { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 .forest-sun-rig__rays { opacity: .62; }
 .home-hero__shade {
   z-index: 1;
@@ -1563,18 +1398,6 @@ html.light .forest-sun-rig { opacity: 1; transform: translate3d(0, 0, 0) scale(1
   .research-page__grid { grid-template-columns: 1fr; }
   .research-page .research-card { min-height: unset; }
 }
-html.light .home-hero__shade {
-  background:
-    linear-gradient(90deg, rgb(12 32 24 / 72%) 0%, rgb(12 32 24 / 46%) 24%, rgb(12 32 24 / 10%) 38%, transparent 48%);
-}
-html.light .home-hero h1,
-html.light .home-hero__text-link,
-html.light .home-hero__full-form,
-html.light .home-hero__description { color: var(--ink); }
-html.light .home-hero__eyebrow { color: var(--signal-accent); }
-html.light .home-hero__eyebrow span { background-color: var(--signal-accent); }
-html.light .home-hero__credit,
-html.light .home-hero__index { color: color-mix(in srgb, var(--ink) 75%, transparent); }
 @media (min-width: 768px) and (max-width: 1023px) {
   .site-nav { gap: 0; padding-inline: 6px; }
   .site-nav-link { padding-inline: 7px; font-size: 9px; letter-spacing: .1em; }

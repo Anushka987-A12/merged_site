@@ -4,13 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ClickSpark from "@/components/ui/ClickSpark";
 import { SiteDock } from "@/components/site-dock";
-import { useTheme } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { IconBrandGithub, IconBrandInstagram } from "@tabler/icons-react";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
-  const { theme } = useTheme();
-  const isLight = theme === "light";
   const pathname = usePathname();
 
   const navLinks = [
@@ -22,12 +18,12 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <ClickSpark sparkColor={isLight ? "#97cd97" : "#ffad5e"} sparkSize={10} sparkRadius={18} sparkCount={8} duration={420}>
+    <ClickSpark sparkColor="#ffad5e" sparkSize={10} sparkRadius={18} sparkCount={8} duration={420}>
       <div className="relative min-h-screen overflow-x-clip bg-[var(--page)] text-[var(--ink)] selection:bg-[#8b8f6b]/30">
 
         {/* Tactical Header Strip */}
         <header className="site-header sticky top-0 z-40">
-          <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3.5 md:px-8">
+          <div className="relative mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3.5 md:px-8">
             {/* Left Brand Badge */}
             <Link href="/" className="group flex items-center gap-3.5 focus:outline-none">
               <div className="site-brand-mark relative grid h-9 w-9 place-items-center rounded-lg font-mono text-[11px] font-bold tracking-widest transition-all">
@@ -50,7 +46,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             </Link>
 
             {/* Center Desktop Quick Links */}
-            <nav className="site-nav hidden md:flex items-center gap-1 rounded-full px-3 py-1 font-mono text-[11px] tracking-widest">
+            <nav className="site-nav absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full px-3 py-1 font-mono text-[11px] tracking-widest md:flex">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -64,11 +60,6 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                 );
               })}
             </nav>
-
-            {/* Theme control */}
-            <div className="site-meta flex items-center gap-3 font-mono text-[10px] tracking-widest">
-              <ThemeToggle />
-            </div>
           </div>
         </header>
 

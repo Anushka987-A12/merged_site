@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 
 type RadarObstacle = { id: number; x: number; y: number; size: number; kind: number; delay: number };
 type MotionProfile = { duration: number; keyTimes: string; keyPoints: string };
@@ -94,16 +94,22 @@ const ROVER_MOTION: MotionProfile = {
   keyPoints: "0;0.340;0.580;1",
 };
 
-function DronePatrol() {
-  const [reduceMotion, setReduceMotion] = useState(false);
+function subscribeToMotionPreference(onChange: () => void) {
+  const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
+}
 
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduceMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+function getMotionPreference() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function useReducedMotionPreference() {
+  return useSyncExternalStore(subscribeToMotionPreference, getMotionPreference, () => false);
+}
+
+function DronePatrol() {
+  const reduceMotion = useReducedMotionPreference();
 
   return (
     <g className="scroll-drones" aria-hidden="true">
@@ -182,15 +188,7 @@ function RadarReturns() {
 }
 
 export function DefenseBackground() {
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduceMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+  const reduceMotion = useReducedMotionPreference();
 
   return (
     <div

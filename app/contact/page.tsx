@@ -26,10 +26,7 @@ export default function ContactPage() {
       <SectionAtmosphere variant="contact" />
 
       <header className="contact-heading">
-        <span className="font-mono text-[10px] tracking-[0.24em] text-[var(--signal-accent)]">
-          CONTACT / RUGVED SYSTEMS
-        </span>
-        <h1 className="mt-4 font-commissioner text-5xl font-bold tracking-[-0.04em] text-[var(--ink)] md:text-7xl">
+        <h1 className="font-commissioner text-5xl font-bold tracking-[-0.04em] text-[var(--ink)] md:text-7xl">
           Reach out.
         </h1>
         <p className="mt-4 max-w-[58ch] text-base leading-8 text-[var(--muted-ink)]">
@@ -41,12 +38,9 @@ export default function ContactPage() {
       <div className="contact-layout mt-10 md:mt-14">
         <section className="contact-info" aria-labelledby="contact-info-title">
           <div>
-            <span className="font-mono text-[10px] tracking-[0.2em] text-[var(--field-accent)]">
-              RUGVED / MIT MANIPAL
-            </span>
             <h2
               id="contact-info-title"
-              className="mt-3 font-commissioner text-2xl font-bold text-[var(--ink)]"
+              className="font-commissioner text-2xl font-bold text-[var(--ink)]"
             >
               Contact information
             </h2>

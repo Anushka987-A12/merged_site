@@ -1,243 +1,137 @@
 "use client";
-import React, { useState } from "react";
+
+import { useState } from "react";
+import Link from "next/link";
 import {
-  IconShieldCheck,
-  IconSettings,
+  IconBrain,
   IconCircuitCapacitor,
-  IconSearch,
   IconRobot,
-  IconCpu,
-  IconCamera,
+  IconSettings,
+  IconShieldCheck,
+  IconArrowDownRight,
+  IconChevronDown,
+  IconArrowUpRight,
 } from "@tabler/icons-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { SectionAtmosphere } from "@/components/section-atmosphere";
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   DATA
-───────────────────────────────────────────────────────────────────────────── */
-interface Division {
-  code: string;
-  title: string;
-  category: string;
-  icon: React.ComponentType<{ className?: string }>;
-  leadRole: string;
-  summary: string;
-  deliverables: string[];
-}
-
-const DIVISIONS: Division[] = [
-  {
-    code: "S-01",
-    title: "The Board",
-    category: "Command & Strategy",
-    icon: IconShieldCheck,
-    leadRole: "Team Lead & Technical Directors",
-    summary:
-      "Coordinates team strategy, technical roadmaps, competitions and faculty collaboration.",
-    deliverables: ["Annual Strategic Roadmap", "Defence Expo Dossiers", "System Architecture Specs"],
-  },
-  {
-    code: "S-04",
-    title: "Research",
-    category: "Science & Innovation",
-    icon: IconSearch,
-    leadRole: "Research Director & Paper Authors",
-    summary:
-      "Studies robotic perception, terrain mapping and sensor fusion, turning results into papers and patents.",
-    deliverables: ["Peer-Reviewed Papers", "Patent Filings", "Simulation Benchmarks"],
-  },
-  {
-    code: "S-05",
-    title: "Ai and Robotics",
-    category: "Software & Autonomy",
-    icon: IconRobot,
-    leadRole: "Autonomy & Computer Vision Leads",
-    summary:
-      "Builds vehicle autonomy with 3D SLAM, edge AI, obstacle detection and adaptive path planning.",
-    deliverables: ["Autonomous Nav Stack", "Real-Time 3D SLAM", "Computer Vision Models"],
-  },
-  {
-    code: "S-02",
-    title: "Management",
-    category: "Operations & Logistics",
-    icon: IconSettings,
-    leadRole: "Operations & PR Leads",
-    summary:
-      "Plans schedules, budgets, procurement, sponsorships and outreach for the engineering team.",
-    deliverables: ["Sponsorship Pitches", "Budget Audits", "Media Campaigns"],
-  },
-  {
-    code: "S-03",
-    title: "Electronics",
-    category: "Hardware & Embedded",
-    icon: IconCircuitCapacitor,
-    leadRole: "Electronics Head & Firmware Engineers",
-    summary:
-      "Designs circuit boards, power systems, telemetry and embedded firmware for our platforms.",
-    deliverables: ["Custom Motor Drivers", "FPGA Acoustic Board", "Redundant BMS Module"],
-  },
-  {
-    code: "S-06",
-    title: "Mechanical",
-    category: "Engineering & Chassis",
-    icon: IconCpu,
-    leadRole: "Mechanical Lead & CAD Specialists",
-    summary:
-      "Designs tracked chassis, modular payload mounts and sealed hardware for demanding terrain.",
-    deliverables: ["All-Terrain Track Assembly", "Armored Chassis", "Modular Payload Bays"],
-  },
-];
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   COMPONENTS
-───────────────────────────────────────────────────────────────────────────── */
+import { SUBSYSTEMS } from "@/lib/subsystem-data";
 
 export default function SubsystemsPage() {
-  const [activeCode, setActiveCode] = useState<string>("S-01");
-  const activeDiv = DIVISIONS.find((d) => d.code === activeCode) || DIVISIONS[0];
-  const ActiveIcon = activeDiv.icon;
-  
-  // Keep shared colors theme-driven while tabs use a simple active underline.
-  const colors = {
-    textPrimary: "text-[var(--ink)]",
-    textSecondary: "text-[var(--muted-ink)]",
-  };
+  const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [pinnedSlug, setPinnedSlug] = useState<string | null>(null);
 
   return (
-    <>
-      {/* ── GLOBAL FONT OVERRIDE: IBM PLEX SERIF ── */}
-      {/* BACKGROUND SLOT: subsystems page placeholder. */}
-      <main data-background-slot="subsystems" className="relative isolate mx-auto max-w-[1360px] min-h-screen px-4 pt-6 pb-20 md:px-8 space-y-6">
-        {/* BACKGROUND MOTIF: circuit paths and signal pulses. */}
-        <SectionAtmosphere variant="subsystems" />
-        
-        {/* ── HEADER (Centered & Shifted Up) ── */}
-        <div className="flex flex-col items-center justify-center space-y-2 pt-2 pb-2">
-          <div className="flex items-center gap-3 tracking-[0.15em] uppercase text-[11px]">
-            <span className="font-bold text-[var(--signal-accent)]">
-              05
-            </span>
-            <span className={`font-semibold tracking-widest ${colors.textSecondary}`}>
-              Organization Structure
-            </span>
-          </div>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h1 className={`text-[42px] md:text-[56px] font-bold leading-none tracking-tight ${colors.textPrimary}`}>
-              SubSystems
-            </h1>
-          </motion.div>
-        </div>
+    <main data-background-slot="subsystems" className="relative isolate mx-auto min-h-screen max-w-[1360px] space-y-10 px-5 pb-24 pt-10 md:space-y-14 md:px-10 md:pt-16">
+      <SectionAtmosphere variant="subsystems" />
 
-        {/* ── HORIZONTAL TAB ROW (Centered on Desktop) ── */}
-        <div className="relative">
-          <div className="theme-rule flex overflow-x-auto hide-scrollbar gap-2 pb-3 border-b md:justify-center">
-            {DIVISIONS.map((d) => {
-              const isSelected = d.code === activeCode;
-              return (
-                <button
-                  key={d.code}
-                  onClick={() => setActiveCode(d.code)}
-                  className={`section-tab flex shrink-0 items-center gap-2.5 px-4 py-2.5 transition-all duration-300 ${
-                    isSelected
-                      ? "is-active"
-                      : ""
-                  }`}
-                >
-                  <span className="text-[14px] font-medium tracking-wide">
-                    {d.title}
+      <header className="border-b border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] pb-8 md:pb-10">
+        <h1 className="font-commissioner text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">Subsystems</h1>
+      </header>
+
+      <section aria-label="RUGVED subsystems" className="grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {SUBSYSTEMS.map((subsystem, index) => {
+          const Icon = {
+            management: IconSettings,
+            robotics: IconRobot,
+            electronics: IconCircuitCapacitor,
+            mechanical: IconShieldCheck,
+            research: IconBrain,
+          }[subsystem.icon];
+          const isActive = activeSlug === subsystem.slug;
+          const detailsId = `division-details-${subsystem.slug}`;
+
+          return (
+            <motion.article
+              key={subsystem.slug}
+              layout
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.32, delay: index * 0.04 }}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse" && !pinnedSlug) {
+                  setActiveSlug(subsystem.slug);
+                }
+              }}
+              onPointerLeave={() => {
+                if (pinnedSlug !== subsystem.slug) {
+                  setActiveSlug((current) => current === subsystem.slug ? null : current);
+                }
+              }}
+              onFocusCapture={() => {
+                if (!pinnedSlug) setActiveSlug(subsystem.slug);
+              }}
+              className={`overflow-hidden border bg-[color-mix(in_srgb,var(--surface)_82%,transparent)] transition-colors ${isActive ? "border-[color-mix(in_srgb,var(--signal-accent)_58%,transparent)] shadow-[0_18px_48px_rgba(0,0,0,0.2)]" : "border-[color-mix(in_srgb,var(--blue-accent)_20%,transparent)]"}`}
+            >
+              <Link
+                href={`/subsystems/${subsystem.slug}`}
+                className="group flex min-h-56 w-full flex-col p-6 text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--field-accent)] sm:p-7"
+              >
+                <div className="flex items-center gap-4">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center border border-[color-mix(in_srgb,var(--field-accent)_30%,transparent)] bg-[color-mix(in_srgb,var(--field-accent)_8%,transparent)] text-[var(--field-accent)]">
+                    <Icon className="h-5 w-5" />
                   </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ── ACTIVE DIVISION DOSSIER (Layered Matte Design) ── */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeDiv.code}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25 }}
-            className="theme-rule border-y py-5 md:py-8"
-          >
-            <div className="flex flex-col">
-              
-              {/* Header block */}
-              <div className="theme-rule p-0 pb-6 md:pb-8 border-b flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-5">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center text-[var(--blue-accent)]">
-                    <ActiveIcon className="h-8 w-8 opacity-90" />
-                  </div>
-                  <div>
-                    <div className={`text-[11px] tracking-widest uppercase mb-1 font-medium ${colors.textSecondary}`}>
-                      {activeDiv.code} / {activeDiv.leadRole}
-                    </div>
-                    <h2 className={`text-[28px] md:text-[36px] font-bold leading-none ${colors.textPrimary}`}>
-                      {activeDiv.title}
-                    </h2>
-                  </div>
+                  <h2 className="font-commissioner text-2xl font-bold tracking-tight text-[var(--ink)] md:text-[27px]">{subsystem.title}</h2>
                 </div>
-                <div className="text-[12px] shrink-0 tracking-wide font-semibold text-[var(--signal-accent)]">
-                  {activeDiv.category}
-                </div>
-              </div>
+                <p className="mt-4 text-sm leading-6 text-[var(--muted-ink)]">{subsystem.summary}</p>
+                <span className="mt-auto flex items-center justify-between pt-6 font-mono text-[9px] font-bold tracking-[0.17em] text-[var(--field-accent)]">
+                  VIEW DETAILS <IconArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </span>
+              </Link>
 
-              {/* Grid Content: Image Left, Text Right */}
-              <div className="grid items-center gap-8 pt-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:pt-8">
-                
-                {/* ── PHOTO PLACEHOLDER ── */}
-                <div className="w-full min-h-[220px] lg:min-h-[360px] flex flex-col items-center justify-center group transition-colors">
-                  <IconCamera className="h-8 w-8 mb-3 text-[var(--blue-accent)] opacity-50 group-hover:opacity-90 transition-opacity" />
-                  <p className={`text-sm tracking-wide font-light ${colors.textSecondary}`}>
-                    Reserved for {activeDiv.title} Division Photos
-                  </p>
-                </div>
+              <button
+                type="button"
+                aria-expanded={isActive}
+                aria-controls={detailsId}
+                onClick={() => {
+                  if (pinnedSlug === subsystem.slug) {
+                    setPinnedSlug(null);
+                    setActiveSlug(null);
+                  } else {
+                    setPinnedSlug(subsystem.slug);
+                    setActiveSlug(subsystem.slug);
+                  }
+                }}
+                className="flex w-full items-center justify-between border-t border-[color-mix(in_srgb,var(--blue-accent)_18%,transparent)] px-6 py-3 text-left font-mono text-[9px] font-bold tracking-[0.17em] text-[var(--muted-ink)] transition-colors hover:text-[var(--field-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--field-accent)] sm:px-7"
+              >
+                {isActive ? "CLOSE QUICK VIEW" : "QUICK VIEW"}
+                <IconChevronDown className={`h-4 w-4 transition-transform duration-300 ${isActive ? "rotate-180" : ""}`} />
+              </button>
 
-                {/* ── TEXT & DELIVERABLES ── */}
-                <div className="py-4 flex flex-col justify-center space-y-8">
-                  
-                  {/* Summary */}
-                  <div className="space-y-4">
-                    <div className={`text-[11px] uppercase tracking-[0.2em] font-bold ${colors.textSecondary}`}>
-                      Role Summary
+              <AnimatePresence initial={false}>
+                {isActive && (
+                  <motion.div
+                    id={detailsId}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.28, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="border-t border-[color-mix(in_srgb,var(--blue-accent)_22%,transparent)] px-6 pb-6 pt-5 sm:px-7 sm:pb-7">
+                      <p className="text-sm text-[var(--ink)]"><span className="font-semibold">Lead:</span> {subsystem.leadRole}</p>
+                      <p className="mt-5 text-sm leading-6 text-[var(--muted-ink)]">{subsystem.overview}</p>
+                      <h3 className="mt-5 text-sm font-semibold text-[var(--ink)]">Deliverables</h3>
+                      <ul className="mt-3 grid gap-2">
+                        {subsystem.deliverables.map((deliverable) => (
+                          <li key={deliverable} className="flex items-start gap-2 text-sm text-[var(--ink)]">
+                            <IconArrowDownRight className="mt-0.5 h-4 w-4 shrink-0 text-[var(--field-accent)]" />
+                            {deliverable}
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="mt-5 flex flex-wrap gap-2">
+                        {subsystem.focus.map((focus) => (
+                          <span key={focus} className="border border-[color-mix(in_srgb,var(--blue-accent)_25%,transparent)] px-2.5 py-1.5 font-mono text-[9px] tracking-wide text-[var(--muted-ink)]">{focus}</span>
+                        ))}
+                      </div>
                     </div>
-                    <p className={`line-clamp-3 text-[15px] md:text-[16px] leading-relaxed ${colors.textPrimary}`}>
-                      {activeDiv.summary}
-                    </p>
-                  </div>
-
-                  {/* Deliverables (Tags) */}
-                  <div className="theme-rule space-y-4 border-t pt-5">
-                    <div className={`text-[11px] uppercase tracking-[0.2em] font-bold ${colors.textSecondary}`}>
-                      Key Deliverables
-                    </div>
-                    <div className="flex flex-wrap gap-x-6 gap-y-3">
-                      {activeDiv.deliverables.map((del) => (
-                        <span
-                          key={del}
-                          className={`inline-flex items-center gap-2 text-[13px] font-medium ${colors.textPrimary}`}
-                        >
-                          <span className="h-1.5 w-1.5 rounded-full bg-[var(--field-accent)]" />
-                          {del}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-      </main>
-    </>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.article>
+          );
+        })}
+      </section>
+    </main>
   );
 }

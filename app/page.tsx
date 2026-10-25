@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 import {
   IconArrowUpRight,
   IconFileText,
-  IconMinus,
   IconTrophy,
 } from "@tabler/icons-react";
 import {
@@ -18,143 +15,9 @@ import {
 } from "motion/react";
 import { TimelineDroneArt } from "@/components/timeline-drone-art";
 import { ForestMissionScene } from "@/components/forest-mission-scene";
+import { RUGVED_DATA } from "@/lib/rugved-data";
 
-const EVENTS = [
-  {
-    id: 1,
-    year: "2017",
-    type: "achievement",
-    badge: "UAV CHALLENGE",
-    title: "Tata Pioneer’s Makerthon",
-    detail: "National-level winner · Techfest, IIT Bombay",
-    tag: "FIRST COMPETITION",
-  },
-  {
-    id: 2,
-    year: "2018",
-    type: "achievement",
-    badge: "IGVC",
-    title: "Design Challenge",
-    detail: "8th worldwide · Intelligent Ground Vehicle Competition",
-    tag: "INTERNATIONAL",
-  },
-  {
-    id: 3,
-    year: "2020",
-    type: "achievement",
-    badge: "COVIDEATE",
-    title: "Covideate",
-    detail: "First place · IIT Bombay Techfest",
-    tag: "TECHFEST",
-  },
-  {
-    id: 4,
-    year: "2020",
-    type: "achievement",
-    badge: "E-YANTRA",
-    title: "e-Yantra Robotics Competition",
-    detail: "Finalist · e-Yantra Robotics Competition (EYRC)",
-    tag: "ROBOTICS",
-  },
-  {
-    id: 5,
-    year: "2020",
-    type: "achievement",
-    badge: "FORD GME",
-    title: "Ford GME Hackathon",
-    detail: "Second place",
-    tag: "HACKATHON",
-  },
-  {
-    id: 6,
-    year: "2020",
-    type: "achievement",
-    badge: "DEF HACKS",
-    title: "Def Hacks Global 2.0",
-    detail: "First place · Major League Hacking",
-    tag: "GLOBAL",
-  },
-  {
-    id: 7,
-    year: "2021",
-    type: "achievement",
-    badge: "PRAGYAAN",
-    title: "Pragyaan Fusion Hackathon",
-    detail: "First place · Mechanical and Electrical divisions · NIT Trichy",
-    tag: "NIT TRICHY",
-  },
-  {
-    id: 8,
-    year: "2023",
-    type: "achievement",
-    badge: "GUIDING GAZE",
-    title: "OpenCV AI Competition",
-    detail: "International Rank 7 · Only Indian undergraduate team",
-    tag: "COMPUTER VISION",
-  },
-  {
-    id: 9,
-    year: "2023–24",
-    type: "achievement",
-    badge: "E-YANTRA",
-    title: "IIT Bombay Robotics Competition",
-    detail: "All India Rank 10",
-    tag: "ROBOTICS",
-  },
-  {
-    id: 10,
-    year: "2024",
-    type: "achievement",
-    badge: "SMART INDIA HACKATHON",
-    title: "National finalist",
-    detail: "Top 5 · Defence theme",
-    tag: "AI TERRAIN NAVIGATION",
-  },
-  {
-    id: 11,
-    year: "2025",
-    type: "achievement",
-    badge: "AYUSH HABBA",
-    title: "Ayush Habba Hackathon",
-    detail: "First place · ₹25,000 prize · Mangalore",
-    tag: "HACKATHON",
-  },
-  {
-    id: 12,
-    year: "2025",
-    type: "achievement",
-    badge: "E-YANTRA",
-    title: "e-Yantra Stage 2",
-    detail: "Among the top 20 teams in India to reach Stage 2",
-    tag: "ROBOTICS",
-  },
-  {
-    id: 13,
-    year: "2025",
-    type: "achievement",
-    badge: "WALRUS 2.0",
-    title: "National Defence Expo",
-    detail: "Prototype feature and platform showcase",
-    tag: "FIELD ROBOTICS",
-  },
-  {
-    id: 14,
-    year: "2026",
-    type: "achievement",
-    badge: "TECHSOLSTICE",
-    title: "TechSolstice competitions",
-    detail: "Top 7 and Top 15 finishes · MITB competitions",
-    tag: "COMPETITION RESULTS",
-  },
-];
-
-const SPECIALTIES = [
-  "Electronics",
-  "Mechanical engineering",
-  "Artificial intelligence",
-  "Research",
-  "Management",
-];
+const EVENTS = RUGVED_DATA.milestones;
 
 const TIMELINE_COLORS = {
   textPrimary: "text-[var(--ink)]",
@@ -166,138 +29,6 @@ const TIMELINE_COLORS = {
 
 type TimelineEvent = (typeof EVENTS)[number];
 const LAST_MILESTONE_INDEX = EVENTS.length - 1;
-
-function SectionLabel({ index, label }: { index: string; label: string }) {
-  return (
-    <div className="section-label">
-      <span className="section-label__index">
-        <IconMinus className="h-3 w-3" />
-        {index}
-      </span>
-      <span className="theme-rule hidden h-px w-12 sm:block" />
-      <span className="section-label__text">{label}</span>
-    </div>
-  );
-}
-
-function DynamicPercent({ value }: { value: MotionValue<number> }) {
-  const [percent, setPercent] = useState(0);
-
-  useEffect(() => value.on("change", (next) => setPercent(next)), [value]);
-
-  return <>{percent}</>;
-}
-
-function TimelineScrubber({
-  progress,
-  onScrub,
-}: {
-  progress: MotionValue<number>;
-  onScrub: (progress: number, behavior: ScrollBehavior) => void;
-}) {
-  const [percent, setPercent] = useState(Math.round(progress.get() * 100));
-  const barRef = useRef<HTMLDivElement>(null);
-  const originalScrollBehavior = useRef<
-    CSSStyleDeclaration["scrollBehavior"] | null
-  >(null);
-  const fill = useTransform(progress, [0, 1], ["0%", "100%"]);
-
-  useEffect(
-    () => progress.on("change", (next) => setPercent(Math.round(next * 100))),
-    [progress],
-  );
-  useEffect(
-    () => () => {
-      if (originalScrollBehavior.current !== null) {
-        document.documentElement.style.scrollBehavior =
-          originalScrollBehavior.current;
-      }
-    },
-    [],
-  );
-
-  const scrubAt = (clientX: number, behavior: ScrollBehavior = "auto") => {
-    const bounds = barRef.current?.getBoundingClientRect();
-    if (!bounds || bounds.width === 0) return;
-    onScrub(
-      Math.min(1, Math.max(0, (clientX - bounds.left) / bounds.width)),
-      behavior,
-    );
-  };
-  const restoreScrollBehavior = () => {
-    if (originalScrollBehavior.current !== null) {
-      document.documentElement.style.scrollBehavior =
-        originalScrollBehavior.current;
-      originalScrollBehavior.current = null;
-    }
-  };
-
-  return (
-    <div
-      ref={barRef}
-      className="timeline-progress-panel__bar"
-      role="slider"
-      tabIndex={0}
-      aria-label="Achievement timeline progress"
-      aria-orientation="horizontal"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={percent}
-      aria-valuetext={`${percent}% through achievements`}
-      onPointerDown={(event) => {
-        event.preventDefault();
-        if (originalScrollBehavior.current === null) {
-          originalScrollBehavior.current =
-            document.documentElement.style.scrollBehavior;
-          document.documentElement.style.scrollBehavior = "auto";
-        }
-        event.currentTarget.setPointerCapture(event.pointerId);
-        scrubAt(event.clientX);
-      }}
-      onPointerMove={(event) => {
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-          scrubAt(event.clientX);
-        }
-      }}
-      onPointerUp={restoreScrollBehavior}
-      onPointerCancel={restoreScrollBehavior}
-      onKeyDown={(event) => {
-        const current = percent / 100;
-        const increments: Record<string, number> = {
-          ArrowRight: 0.04,
-          ArrowUp: 0.04,
-          ArrowLeft: -0.04,
-          ArrowDown: -0.04,
-          PageUp: 0.1,
-          PageDown: -0.1,
-        };
-        if (event.key === "Home") {
-          event.preventDefault();
-          onScrub(0, "smooth");
-        } else if (event.key === "End") {
-          event.preventDefault();
-          onScrub(1, "smooth");
-        } else if (event.key in increments) {
-          event.preventDefault();
-          onScrub(
-            Math.min(1, Math.max(0, current + increments[event.key])),
-            "smooth",
-          );
-        }
-      }}
-    >
-      <span className="timeline-progress-panel__bar-track" />
-      <motion.span
-        className="timeline-progress-panel__bar-fill"
-        style={{ width: fill }}
-      />
-      <span
-        className="timeline-progress-panel__bar-thumb"
-        style={{ left: `${percent}%` }}
-      />
-    </div>
-  );
-}
 
 function TimelineSpotlightItem({
   event,
@@ -332,10 +63,15 @@ function TimelineSpotlightItem({
   );
 
   return (
-    <div
+    <motion.div
       ref={rowRef}
       data-timeline-row
-      className="timeline-row relative my-3 flex w-full items-center justify-center md:my-5"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-36px" }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+      data-side={index % 2 === 0 ? "left" : "right"}
+      className="timeline-row relative my-1 flex w-full items-center md:my-2"
     >
       <div className="timeline-row__column">
         <motion.article
@@ -355,18 +91,8 @@ function TimelineSpotlightItem({
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
           <div className="timeline-entry__content">
-            <div className="mb-3 flex items-center justify-between gap-3 font-mono text-[10px] tracking-[0.16em]">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-[var(--signal-accent)]">
-                  {event.badge}
-                </span>
-                <span className="hidden text-[var(--muted-ink)] sm:inline">
-                  {event.tag}
-                </span>
-              </div>
-              <span className="shrink-0 font-mono text-[11px] font-bold text-[var(--muted-ink)]">
-                {event.year}
-              </span>
+            <div className="mb-3 flex items-center justify-end gap-3 font-mono text-[10px] tracking-[0.16em]">
+              <span className="shrink-0 font-mono text-[11px] font-bold text-[var(--muted-ink)]">{event.year}</span>
             </div>
 
             <div className="flex items-start gap-2.5">
@@ -393,31 +119,23 @@ function TimelineSpotlightItem({
               )}
             </p>
 
-            <div className="ml-[28px] mt-3 flex items-center gap-2 font-mono text-[9px] text-[var(--muted-ink)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--field-accent)]" />
-              <span className="tracking-widest">MILESTONE · REPORTED</span>
-              <span className="theme-rule h-px w-6" />
-              <span>{String(index + 1).padStart(2, "0")}</span>
-            </div>
           </div>
         </motion.article>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 type DronePoint = { x: number; y: number };
 type DroneRect = { left: number; right: number; top: number; bottom: number };
 type DronePersonality = { side: -1 | 1; homeGap: number; yJitter: number };
-type DroneAnchor = DronePersonality & { y: number };
+type DroneAnchor = DronePersonality & { y: number; edgeX: number };
 type DroneGap = { yTop: number; yBot: number; yCenter: number };
 type DroneFlightPath = { from: DronePoint; c1: DronePoint; c2: DronePoint; to: DronePoint };
 type DroneGeometry = {
   width: number;
   height: number;
   centerX: number;
-  columnLeft: number;
-  columnRight: number;
   anchors: DroneAnchor[];
   cards: DroneRect[];
   gaps: DroneGap[];
@@ -449,7 +167,7 @@ function TimelineDroneRoute({
       return value - Math.floor(value);
     };
     return EVENTS.map((_, index) => ({
-      side: (randomAt(index, 0) < 0.5 ? -1 : 1) as -1 | 1,
+      side: (index % 2 === 0 ? 1 : -1) as -1 | 1,
       homeGap: 56 + randomAt(index, 100) * 48,
       yJitter: (randomAt(index, 200) * 2 - 1) * 40,
     }));
@@ -459,8 +177,6 @@ function TimelineDroneRoute({
     width: 0,
     height: 0,
     centerX: 0,
-    columnLeft: 0,
-    columnRight: 0,
     anchors: [],
     cards: [],
     gaps: [],
@@ -479,7 +195,7 @@ function TimelineDroneRoute({
       const trackBounds = track.getBoundingClientRect();
       const width = track.clientWidth || trackBounds.width;
       const height = Math.max(track.offsetHeight, track.scrollHeight);
-      const columnWidth = Math.min(680, window.innerWidth * 0.92, width);
+      const columnWidth = Math.max(0, Math.min(520, width / 2 - 64));
       const centerX = width / 2;
       const entries = Array.from(
         track.querySelectorAll<HTMLElement>(".timeline-entry"),
@@ -510,14 +226,26 @@ function TimelineDroneRoute({
         width,
         height,
         centerX,
-        columnLeft: centerX - columnWidth / 2,
-        columnRight: centerX + columnWidth / 2,
-        anchors: EVENTS.map((_, index) => ({
-          y: rawCards[index]
-            ? (rawCards[index].top + rawCards[index].bottom) / 2
-            : (height * (index + 0.5)) / EVENTS.length,
-          ...(personalitiesRef.current[index] ?? { side: 1 as const, homeGap: 80, yJitter: 0 }),
-        })),
+        anchors: EVENTS.map((_, index) => {
+          const raw = rawCards[index];
+          const padded = cards[index];
+          const personality = personalitiesRef.current[index] ?? {
+            side: 1 as const,
+            homeGap: 80,
+            yJitter: 0,
+          };
+          const side = raw ? ((raw.left + raw.right) / 2 < centerX ? 1 : -1) : personality.side;
+          return {
+            ...personality,
+            side: side as -1 | 1,
+            y: raw
+              ? (raw.top + raw.bottom) / 2
+              : (height * (index + 0.5)) / EVENTS.length,
+            edgeX: padded
+              ? side < 0 ? padded.left : padded.right
+              : side < 0 ? centerX - columnWidth / 2 : centerX + columnWidth / 2,
+          };
+        }),
         cards,
         gaps,
         revision: geometryRef.current.revision + 1,
@@ -617,9 +345,7 @@ function TimelineDroneRoute({
     const homePoint = (anchor: DroneAnchor, geometry: DroneGeometry) =>
       safePosition(
         {
-          x: anchor.side < 0
-            ? geometry.columnLeft - anchor.homeGap
-            : geometry.columnRight + anchor.homeGap,
+          x: anchor.edgeX + anchor.side * anchor.homeGap,
           y: anchor.y + anchor.yJitter,
         },
         geometry,
@@ -770,7 +496,7 @@ function TimelineDroneRoute({
 
       if (state.initialized && idx !== state.lastIdx) {
         const personality: DronePersonality = {
-          side: Math.random() < 0.5 ? -1 : 1,
+          side: geometry.anchors[idx]?.side ?? (idx % 2 === 0 ? 1 : -1),
           homeGap: randomBetween(56, 104),
           yJitter: randomBetween(-40, 40),
         };
@@ -897,7 +623,6 @@ function TimelineDroneRoute({
 export default function Home() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeTimelineIndex, setActiveTimelineIndex] = useState(0);
-  const [showTimelineHud, setShowTimelineHud] = useState(false);
   const { scrollYProgress } = useScroll({
     target: trackRef,
     offset: ["start 86%", "end 82%"],
@@ -907,38 +632,6 @@ export default function Home() {
     damping: 30,
     restDelta: 0.001,
   });
-  const percentReadout = useTransform(smoothProgress, (value) =>
-    Math.min(100, Math.max(0, Math.round(value * 100))),
-  );
-  const scrubTimeline = useCallback(
-    (progress: number, behavior: ScrollBehavior) => {
-      const track = trackRef.current;
-      if (!track) return;
-      const bounds = track.getBoundingClientRect();
-      const documentTop = bounds.top + window.scrollY;
-      const documentBottom = bounds.bottom + window.scrollY;
-      const start = documentTop - window.innerHeight * 0.86;
-      const end = documentBottom - window.innerHeight * 0.82;
-      window.scrollTo({ top: start + (end - start) * progress, behavior });
-    },
-    [],
-  );
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    if (!("IntersectionObserver" in window)) {
-      setShowTimelineHud(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      ([entry]) => setShowTimelineHud(entry.isIntersecting),
-      { threshold: 0 },
-    );
-    observer.observe(track);
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <main className="home-page mx-auto max-w-[1440px] space-y-24 px-5 pb-12 md:space-y-32 md:px-8">
       <section
@@ -949,34 +642,10 @@ export default function Home() {
         <div className="home-hero__shade" aria-hidden="true" />
 
         <div className="home-hero__content">
-          <p className="home-hero__eyebrow">
-            MIT MANIPAL <span /> STUDENT-LED ROBOTICS
-          </p>
-          <h1 id="home-title">RUGVED</h1>
-          <p className="home-hero__full-form">
-            Remote Unmanned Ground Vehicular Electronic Defence Systems
-          </p>
-          <p className="home-hero__description">
-            Ground and aerial robotics for autonomy, reconnaissance and
-            real-world field challenges.
-          </p>
-          <div className="home-hero__actions">
-            <Link href="/projects" className="home-hero__button">
-              Explore projects
-              <IconArrowUpRight className="h-4 w-4" />
-            </Link>
-            <a href="#about" className="home-hero__text-link">
-              About the team
-              <span aria-hidden="true">↓</span>
-            </a>
-          </div>
+          <h1 id="home-title" className="home-hero__title">
+            Manipal&apos;s only defence robotics club
+          </h1>
         </div>
-        <span className="home-hero__credit">
-          ILLUSTRATED FIELD SYSTEMS · MANIPAL
-        </span>
-        <span className="home-hero__index" aria-hidden="true">
-          01 / FIELD SYSTEMS
-        </span>
       </section>
 
       <motion.section
@@ -987,38 +656,34 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         className="home-about space-y-7"
       >
-        <SectionLabel index="01" label="ABOUT US" />
-        <div className="home-about__grid">
-          <div>
-            <span className="home-about__overline">
-              FROM MANIPAL, KARNATAKA
-            </span>
-            <h2 className="mt-3 max-w-[15ch] font-commissioner text-4xl font-bold leading-tight tracking-tight text-[var(--ink)] md:text-6xl">
+        <motion.div
+          className="home-about__grid"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.14 } } }}
+        >
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+          >
+            <h2 className="max-w-[15ch] font-commissioner text-4xl font-bold leading-tight tracking-tight text-[var(--ink)] md:text-6xl">
               Engineering for the unstructured world.
             </h2>
-          </div>
-          <div className="home-about__copy">
+          </motion.div>
+          <motion.div
+            className="home-about__copy"
+            variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+          >
             <p>
-              RUGVED Systems is a defence-focused student robotics project based
-              at MIT Manipal, MAHE. The team develops intelligent, autonomous
-              systems for surveillance, reconnaissance and tactical defence
-              applications.
+              Based at MIT Manipal, RUGVED builds autonomous ground and aerial
+              robotics for surveillance, reconnaissance and defence. Students
+              across engineering, research and operations develop the systems
+              together.
             </p>
-            <p>
-              Its stated focus is innovation, safety and operational efficiency.
-              Electronics, mechanical engineering, artificial intelligence,
-              research and management come together across the team’s work.
-            </p>
-            <div className="home-about__specialties">
-              <span className="home-about__overline">OUR SPECIALTIES</span>
-              <ul>
-                {SPECIALTIES.map((specialty) => (
-                  <li key={specialty}>{specialty}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </motion.section>
 
       <motion.section
@@ -1029,62 +694,14 @@ export default function Home() {
         transition={{ duration: 0.65 }}
         className="home-timeline space-y-7"
       >
-        <SectionLabel index="02" label="MILESTONES" />
         <div className="home-timeline__frame">
           <header className="home-timeline__header">
             <div>
-              <span className="home-about__overline">THE JOURNEY SO FAR</span>
-              <h2 className="mt-3 font-commissioner text-3xl font-bold tracking-tight text-[var(--ink)] md:text-4xl">
-                Progress, revealed one milestone at a time.
+              <h2 className="font-commissioner text-3xl font-bold tracking-tight text-[var(--ink)] md:text-4xl">
+                Our milestones.
               </h2>
-              <p className="mt-3 max-w-[64ch] text-sm leading-7 text-[var(--muted-ink)]">
-                Scroll or scrub the journey. The drone flies between milestones
-                as each one comes into focus.
-              </p>
             </div>
           </header>
-          {showTimelineHud &&
-            typeof document !== "undefined" &&
-            createPortal(
-              <aside
-                className="timeline-progress-panel"
-                aria-label="Achievement timeline progress"
-              >
-                <div className="timeline-progress-panel__card">
-                  <div className="flex items-baseline justify-between font-mono">
-                    <span className="timeline-progress-panel__label">
-                      <i /> JOURNEY
-                    </span>
-                    <span className="timeline-progress-panel__percent">
-                      <DynamicPercent value={percentReadout} />
-                      <small>%</small>
-                    </span>
-                  </div>
-                  <TimelineScrubber
-                    progress={smoothProgress}
-                    onScrub={scrubTimeline}
-                  />
-                  <div
-                    className="timeline-progress-panel__ticks"
-                    aria-hidden="true"
-                  >
-                    <span>0</span>
-                    <span>25</span>
-                    <span>50</span>
-                    <span>75</span>
-                    <span>100</span>
-                  </div>
-                  <div className="timeline-progress-panel__milestone">
-                    <span>MILESTONE</span>
-                    <strong>
-                      {String(activeTimelineIndex + 1).padStart(2, "0")} /{" "}
-                      {String(EVENTS.length).padStart(2, "0")}
-                    </strong>
-                  </div>
-                </div>
-              </aside>,
-              document.body,
-            )}
           <div className="timeline-layout">
             <div className="home-timeline__track" ref={trackRef}>
               <TimelineDroneRoute
@@ -1093,7 +710,7 @@ export default function Home() {
                 trackRef={trackRef}
                 onActiveIndexChange={setActiveTimelineIndex}
               />
-              <div className="relative z-10 flex flex-col gap-24">
+              <div className="relative z-10 flex flex-col gap-8 md:gap-10">
                 {EVENTS.map((event, index) => (
                   <TimelineSpotlightItem
                     key={event.id}
@@ -1106,13 +723,9 @@ export default function Home() {
             </div>
           </div>
           <footer className="home-timeline__source">
-            <span>
-              Selected team-reported results; recent additions are from the
-              RUGVED brochure.
-            </span>
             <span className="flex flex-wrap items-center gap-4">
               <a href="https://rugved.co.in/" target="_blank" rel="noreferrer">
-                RUGVED source
+                RUGVED
                 <IconArrowUpRight className="h-3.5 w-3.5" />
               </a>
               <a
@@ -1120,11 +733,29 @@ export default function Home() {
                 target="_blank"
                 rel="noreferrer"
               >
-                MAHE compendium
+                MAHE
                 <IconArrowUpRight className="h-3.5 w-3.5" />
               </a>
             </span>
           </footer>
+        </div>
+      </motion.section>
+
+      <motion.section
+        id="sponsors"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.6 }}
+        className="pb-8"
+      >
+        <div className="flex flex-col gap-4 border-y border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] py-7 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-commissioner text-2xl font-bold tracking-tight text-[var(--ink)] md:text-3xl">
+            Support student-led robotics.
+          </h2>
+          <a href="https://rugved.co.in/#contact" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.16em] text-[var(--field-accent)]">
+            BECOME A SPONSOR <IconArrowUpRight className="h-3.5 w-3.5" />
+          </a>
         </div>
       </motion.section>
     </main>

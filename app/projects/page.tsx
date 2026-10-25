@@ -8,7 +8,7 @@ export default function ProjectsPage() {
       <header className="border-b border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] pb-8 md:pb-10">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <h1 className="font-commissioner text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">Projects &amp; research.</h1>
+            <h1 className="font-commissioner text-5xl font-bold tracking-tight text-[var(--ink)] md:text-7xl">Projects &amp; research</h1>
             <p className="mt-4 max-w-[64ch] text-sm leading-7 text-[var(--muted-ink)] md:text-base">
               RUGVED platforms, research and intellectual property.
             </p>

@@ -27,7 +27,7 @@ export default function ContactPage() {
 
       <header className="contact-heading">
         <h1 className="font-commissioner text-5xl font-bold tracking-[-0.04em] text-[var(--ink)] md:text-7xl">
-          Reach out.
+          Reach out
         </h1>
         <p className="mt-4 max-w-[58ch] text-base leading-8 text-[var(--muted-ink)]">
           Questions about our work, research or collaboration? We’d be glad to

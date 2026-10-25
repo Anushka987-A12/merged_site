@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="180" viewBox="0 0 340 180" fill="none">
+  <rect x=".5" y=".5" width="339" height="179" rx="14" fill="#0D2029" stroke="#345663"/>
+  <path d="M48 111 76 62l28 49H48Z" fill="#69C9DB" fill-opacity=".14" stroke="#69C9DB" stroke-width="2"/>
+  <path d="m65 100 11-19 11 19H65Z" fill="#69C9DB"/>
+  <text x="122" y="100" fill="#EEF7F5" font-family="Bahnschrift, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing=".3">SimScale</text>
+</svg>

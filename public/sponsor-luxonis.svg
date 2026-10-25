@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="180" viewBox="0 0 340 180" fill="none">
+  <rect x=".5" y=".5" width="339" height="179" rx="14" fill="#0D2029" stroke="#345663"/>
+  <circle cx="76" cy="90" r="34" stroke="#69C9DB" stroke-width="2"/>
+  <circle cx="76" cy="90" r="24" stroke="#69C9DB" stroke-opacity=".42" stroke-width="2"/>
+  <circle cx="76" cy="90" r="7" fill="#69C9DB"/>
+  <path d="M76 56v16M110 90H94M76 124v-16M42 90h16" stroke="#69C9DB" stroke-linecap="round" stroke-width="2"/>
+  <text x="129" y="100" fill="#EEF7F5" font-family="Bahnschrift, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="1.6">LUXONIS</text>
+</svg>

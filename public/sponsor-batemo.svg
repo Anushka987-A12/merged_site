@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="180" viewBox="0 0 340 180" fill="none">
+  <rect x=".5" y=".5" width="339" height="179" rx="14" fill="#0D2029" stroke="#345663"/>
+  <path d="M47 52h27l27 38-27 38H47l27-38-27-38Z" fill="#77DDA4" fill-opacity=".14" stroke="#77DDA4" stroke-width="2"/>
+  <path d="M61 68h19l15 22-15 22H61l15-22-15-22Z" fill="#77DDA4"/>
+  <text x="124" y="101" fill="#EEF7F5" font-family="Bahnschrift, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="1.2">BATEMO</text>
+  <text x="126" y="123" fill="#A8BEC1" font-family="Arial, sans-serif" font-size="10" font-weight="600" letter-spacing="3">GMBH</text>
+</svg>

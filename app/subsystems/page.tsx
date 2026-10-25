@@ -25,7 +25,7 @@ export default function SubsystemsPage() {
       <SectionAtmosphere variant="subsystems" />
 
       <header className="border-b border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] pb-8 md:pb-10">
-        <h1 className="font-commissioner text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">Subsystems</h1>
+        <h1 className="font-commissioner text-5xl font-bold tracking-tight text-[var(--ink)] md:text-7xl">Subsystems</h1>
       </header>
 
       <section aria-label="RUGVED subsystems" className="grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">

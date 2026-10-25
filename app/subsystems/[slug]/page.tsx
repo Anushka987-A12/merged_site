@@ -55,7 +55,7 @@ export default async function SubsystemDetailPage({
       >
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <h1 className="font-commissioner text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">
+            <h1 className="font-commissioner text-5xl font-bold tracking-tight text-[var(--ink)] md:text-7xl">
               {subsystem.title}
             </h1>
           </div>

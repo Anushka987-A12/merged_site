@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="180" viewBox="0 0 340 180" fill="none">
+  <rect x=".5" y=".5" width="339" height="179" rx="14" fill="#0D2029" stroke="#345663"/>
+  <path d="M45 66h20l17 24-17 24H45l17-24-17-24Z" fill="#69C9DB" fill-opacity=".18" stroke="#69C9DB" stroke-width="2"/>
+  <path d="M62 66h20l17 24-17 24H62l17-24-17-24Z" fill="#69C9DB"/>
+  <text x="116" y="88" fill="#EEF7F5" font-family="Bahnschrift, Arial, sans-serif" font-size="19" font-weight="700" letter-spacing=".5">VECTOR</text>
+  <text x="116" y="111" fill="#A8BEC1" font-family="Bahnschrift, Arial, sans-serif" font-size="16" font-weight="600" letter-spacing="1.2">TECHNICS</text>
+</svg>

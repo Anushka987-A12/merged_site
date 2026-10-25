@@ -15,6 +15,7 @@ import {
 } from "motion/react";
 import { TimelineDroneArt } from "@/components/timeline-drone-art";
 import { ForestMissionScene } from "@/components/forest-mission-scene";
+import { SponsorCarousel } from "@/components/sponsor-carousel";
 import { RUGVED_DATA } from "@/lib/rugved-data";
 
 const EVENTS = RUGVED_DATA.milestones;
@@ -649,44 +650,6 @@ export default function Home() {
       </section>
 
       <motion.section
-        id="about"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.6 }}
-        className="home-about space-y-7"
-      >
-        <motion.div
-          className="home-about__grid"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.25 }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.14 } } }}
-        >
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.55, ease: "easeOut" }}
-          >
-            <h2 className="max-w-[15ch] font-commissioner text-4xl font-bold leading-tight tracking-tight text-[var(--ink)] md:text-6xl">
-              Engineering for the unstructured world.
-            </h2>
-          </motion.div>
-          <motion.div
-            className="home-about__copy"
-            variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.55, ease: "easeOut" }}
-          >
-            <p>
-              Based at MIT Manipal, RUGVED builds autonomous ground and aerial
-              robotics for surveillance, reconnaissance and defence. Students
-              across engineering, research and operations develop the systems
-              together.
-            </p>
-          </motion.div>
-        </motion.div>
-      </motion.section>
-
-      <motion.section
         id="timeline"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -697,8 +660,8 @@ export default function Home() {
         <div className="home-timeline__frame">
           <header className="home-timeline__header">
             <div>
-              <h2 className="font-commissioner text-3xl font-bold tracking-tight text-[var(--ink)] md:text-4xl">
-                Our milestones.
+              <h2 className="font-commissioner text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">
+                Our milestones
               </h2>
             </div>
           </header>
@@ -747,16 +710,17 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6 }}
-        className="pb-8"
+        className="home-sponsors space-y-6 pb-8"
       >
-        <div className="flex flex-col gap-4 border-y border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] py-7 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="font-commissioner text-2xl font-bold tracking-tight text-[var(--ink)] md:text-3xl">
-            Support student-led robotics.
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="font-commissioner text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">
+            Our sponsors
           </h2>
           <a href="https://rugved.co.in/#contact" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.16em] text-[var(--field-accent)]">
             BECOME A SPONSOR <IconArrowUpRight className="h-3.5 w-3.5" />
           </a>
         </div>
+        <SponsorCarousel />
       </motion.section>
     </main>
   );

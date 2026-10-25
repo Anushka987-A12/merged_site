@@ -7,7 +7,7 @@ export default function AccomplishmentsPage() {
     <main data-background-slot="accomplishments" className="relative isolate mx-auto min-h-screen max-w-[1180px] space-y-10 px-5 pb-24 pt-10 md:space-y-14 md:px-10 md:pt-16">
       <SectionAtmosphere variant="team" />
       <header className="border-b border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] pb-8 md:pb-10">
-        <h1 className="font-commissioner text-4xl font-bold tracking-tight text-[var(--ink)] md:text-6xl">Accomplishments</h1>
+        <h1 className="font-commissioner text-5xl font-bold tracking-tight text-[var(--ink)] md:text-7xl">Accomplishments</h1>
         <p className="mt-4 max-w-[64ch] text-sm leading-7 text-[var(--muted-ink)] md:text-base">
           Competition results and milestones reported by the RUGVED team across robotics, AI and engineering.
         </p>

@@ -50,9 +50,9 @@
 
 :root {
   color-scheme: dark;
-  --font-open-sans: Inter, Aptos, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --font-display: Inter, "Aptos Display", "Segoe UI Variable Display", "Segoe UI", sans-serif;
-  --font-code: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-open-sans: "Segoe UI Variable Text", "Segoe UI", Inter, Aptos, Arial, sans-serif;
+  --font-display: Bahnschrift, "Segoe UI Variable Display", "Segoe UI", Arial, sans-serif;
+  --font-code: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --page: #071720;
   --surface: #0d2029;
   --surface-raised: #15313a;
@@ -705,41 +705,8 @@ html.dark [class*="text-gray-4"], html.dark [class*="text-gray-5"], html.dark [c
 }
 .home-hero__credit { right: 24px; }
 .home-hero__index { left: 24px; }
-.home-about__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
-  gap: clamp(32px, 7vw, 104px);
-  padding-top: 12px;
-}
-.home-about__copy {
-  max-width: 64ch;
-  color: var(--muted-ink);
-  font-size: 15px;
-  line-height: 1.9;
-}
-.home-about__copy > p + p { margin-top: 16px; }
-.home-about__specialties {
-  margin-top: 28px;
-  padding-top: 20px;
-  border-top: 1px solid color-mix(in srgb, var(--blue-accent) 24%, transparent);
-}
-.home-about__specialties ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
-}
-.home-about__specialties li {
-  padding: 7px 10px;
-  border: 1px solid color-mix(in srgb, var(--field-accent) 24%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
-  color: var(--ink);
-  font-size: 11px;
-}
 .home-timeline__frame {
-  padding: 20px 0 0;
-  border-top: 1px solid color-mix(in srgb, var(--blue-accent) 26%, transparent);
+  padding: 0;
 }
 .home-timeline__header {
   display: flex;
@@ -747,7 +714,6 @@ html.dark [class*="text-gray-4"], html.dark [class*="text-gray-5"], html.dark [c
   justify-content: space-between;
   gap: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid color-mix(in srgb, var(--blue-accent) 22%, transparent);
 }
 .home-timeline__track {
   position: relative;
@@ -847,6 +813,60 @@ html.dark [class*="text-gray-4"], html.dark [class*="text-gray-5"], html.dark [c
   gap: 7px;
   color: var(--field-accent);
   font-weight: 700;
+}
+.sponsor-carousel {
+  display: grid;
+  gap: 14px;
+}
+.sponsor-carousel__track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 2px 1px 10px;
+  scroll-padding-inline: 1px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.sponsor-carousel__track::-webkit-scrollbar { display: none; }
+.sponsor-carousel__track:focus-visible {
+  outline: 2px solid var(--field-accent);
+  outline-offset: 3px;
+}
+.sponsor-carousel__card {
+  flex: 0 0 clamp(248px, 31%, 360px);
+  overflow: hidden;
+  scroll-snap-align: start;
+  transition: transform 220ms ease;
+}
+.sponsor-carousel__card:hover { transform: translateY(-3px); }
+.sponsor-carousel__card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sponsor-carousel__controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.sponsor-carousel__controls button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--blue-accent) 30%, transparent);
+  color: var(--ink);
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+.sponsor-carousel__controls button:hover {
+  border-color: var(--field-accent);
+  background: color-mix(in srgb, var(--field-accent) 8%, transparent);
+  color: var(--field-accent);
+}
+.sponsor-carousel__controls button:focus-visible {
+  outline: 2px solid var(--field-accent);
+  outline-offset: 2px;
 }
 .home-research__heading {
   display: flex;
@@ -1289,10 +1309,9 @@ html.dark [class*="text-gray-4"], html.dark [class*="text-gray-5"], html.dark [c
   .home-hero__description { max-width: 38ch; font-size: 13px; }
   .home-hero__credit { right: 14px; font-size: 8px; }
   .home-hero__index { left: 14px; font-size: 8px; }
-  .home-about__grid,
+  .sponsor-carousel__card { flex-basis: min(82vw, 340px); }
   .home-research__grid,
   .contact-layout { grid-template-columns: 1fr; }
-  .home-about__grid { gap: 24px; }
   .home-timeline__header,
   .home-research__heading { align-items: start; flex-direction: column; }
   .home-timeline__progress { width: min(100%, 240px); }

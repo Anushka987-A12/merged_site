@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 type FlightStyle = CSSProperties & { [key: `--${string}`]: string | number };
 
@@ -58,32 +58,6 @@ function createRandomUgvPatrol() {
       tilt: tilts[index] * (reverse ? -1 : 1),
     })),
   };
-}
-
-function createRandomFlights(): FlightStyle[] {
-  return INITIAL_FLIGHTS.map((flight, index) => {
-    const reverse = Math.random() < 0.34;
-    const scale = index === 0 ? randomBetween(0.88, 1.04) : randomBetween(0.3, 0.66);
-    const duration = randomBetween(12, 46);
-    const firstX = randomBetween(27, 47) * (reverse ? -1 : 1);
-    const secondX = randomBetween(74, 99) * (reverse ? -1 : 1);
-    return {
-      top: `${randomBetween(11, 42).toFixed(1)}%`,
-      left: reverse ? "116%" : "-18%",
-      opacity: randomBetween(0.54, 0.96),
-      filter: `blur(${scale < 0.42 ? randomBetween(0.5, 1.2).toFixed(1) : 0}px)`,
-      "--scout-scale": scale.toFixed(2),
-      "--flight-duration": `${duration.toFixed(1)}s`,
-      "--flight-delay": `${(-Math.random() * duration).toFixed(1)}s`,
-      "--flight-x-a": `${firstX.toFixed(1)}vw`,
-      "--flight-x-b": `${secondX.toFixed(1)}vw`,
-      "--flight-end-x": reverse ? "-145vw" : "145vw",
-      "--flight-y-a": `${randomBetween(-42, 42).toFixed(1)}px`,
-      "--flight-y-b": `${randomBetween(-48, 48).toFixed(1)}px`,
-      "--flight-y-end": `${randomBetween(-38, 38).toFixed(1)}px`,
-      "--flight-tilt": `${randomBetween(-6, 6).toFixed(1)}deg`,
-    };
-  });
 }
 
 function ScoutDrone({ style }: { style: FlightStyle }) {
@@ -238,13 +212,6 @@ function GroundVehicle() {
 }
 
 export function ForestMissionScene() {
-  const [flights, setFlights] = useState(INITIAL_FLIGHTS);
-
-  useEffect(() => {
-    const randomize = window.setTimeout(() => setFlights(createRandomFlights()), 0);
-    return () => window.clearTimeout(randomize);
-  }, []);
-
   return (
     <div className="forest-mission-scene" aria-hidden="true">
       <svg className="forest-mission-scene__landscape" viewBox="0 0 1440 820" preserveAspectRatio="xMidYMid slice">
@@ -336,7 +303,7 @@ export function ForestMissionScene() {
         </g>
         <path d="M0 704q143-21 260 1m945-6q122-27 235-4" stroke="#4f8172" strokeOpacity=".75" strokeWidth="3" />
       </svg>
-      {flights.map((flight, index) => <ScoutDrone key={index} style={flight} />)}
+      {INITIAL_FLIGHTS.map((flight, index) => <ScoutDrone key={index} style={flight} />)}
       <GroundVehicle />
     </div>
   );

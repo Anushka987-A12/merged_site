@@ -5,11 +5,30 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import ClickSpark from "@/components/ui/ClickSpark";
 import { ScrollProgress } from "@/components/scroll-progress";
+import { SiteDock } from "@/components/site-dock";
 import { IconBrandGithub, IconBrandInstagram, IconMenu2, IconX } from "@tabler/icons-react";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen]);
+
+  React.useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setMobileMenuOpen(false);
+    };
+    mq.addEventListener("change", handleChange);
+    return () => mq.removeEventListener("change", handleChange);
+  }, []);
   const navLinks = [
     { label: "About", href: "/#about", route: "/", key: "about" },
     { label: "Projects", href: "/projects", route: "/projects", key: "projects" },
@@ -114,6 +133,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </footer>
+
+        {/* Floating Dock Navigation */}
+        <SiteDock />
       </div>
     </ClickSpark>
   );

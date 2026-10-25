@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { IconArrowUpRight, IconMail, IconMapPin } from "@tabler/icons-react";
 import { SectionAtmosphere } from "@/components/section-atmosphere";
@@ -118,7 +120,10 @@ export default function ContactPage() {
             <span className="contact-form-panel__status">NOT CONNECTED</span>
           </div>
 
-          <form className="contact-form mt-7">
+          <form
+            className="contact-form mt-7"
+            onSubmit={(e) => e.preventDefault()}
+          >
             <div className="contact-form__row">
               <label>
                 <span>Your name</span>
@@ -142,7 +147,7 @@ export default function ContactPage() {
               <span>Message</span>
               <textarea name="message" rows={5} placeholder="Write your message" />
             </label>
-            <button type="button" disabled>
+            <button type="button" disabled aria-disabled="true">
               Message delivery isn’t connected yet
             </button>
             <p className="contact-form__note">

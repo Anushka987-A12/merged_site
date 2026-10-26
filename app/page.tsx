@@ -15,6 +15,7 @@ import {
 } from "motion/react";
 import { TimelineDroneArt } from "@/components/timeline-drone-art";
 import { ForestMissionScene } from "@/components/forest-mission-scene";
+import { TimelineYearRail } from "@/components/timeline-year-rail";
 import { RUGVED_DATA } from "@/lib/rugved-data";
 
 const EVENTS = RUGVED_DATA.milestones;
@@ -539,22 +540,29 @@ export default function Home() {
             </div>
           </header>
           <div className="timeline-layout">
-            <div className="home-timeline__track" ref={trackRef}>
-              <TimelineDroneRoute
-                progress={smoothProgress}
-                activeIndex={activeTimelineIndex}
+            {/* flex row: sticky year-rail on the left, existing track on the right */}
+            <div className="flex items-start gap-4">
+              <TimelineYearRail
+                milestones={RUGVED_DATA.milestones}
                 trackRef={trackRef}
-                onActiveIndexChange={setActiveTimelineIndex}
               />
-              <div className="relative z-10 flex flex-col gap-8 md:gap-10">
-                {EVENTS.map((event, index) => (
-                  <TimelineSpotlightItem
-                    key={event.id}
-                    event={event}
-                    index={index}
-                    isCurrent={index === activeTimelineIndex}
-                  />
-                ))}
+              <div className="home-timeline__track min-w-0 flex-1" ref={trackRef}>
+                <TimelineDroneRoute
+                  progress={smoothProgress}
+                  activeIndex={activeTimelineIndex}
+                  trackRef={trackRef}
+                  onActiveIndexChange={setActiveTimelineIndex}
+                />
+                <div className="relative z-10 flex flex-col gap-8 md:gap-10">
+                  {EVENTS.map((event, index) => (
+                    <TimelineSpotlightItem
+                      key={event.id}
+                      event={event}
+                      index={index}
+                      isCurrent={index === activeTimelineIndex}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -575,6 +583,7 @@ export default function Home() {
             </span>
           </footer>
         </div>
+
       </motion.section>
 
       <motion.section

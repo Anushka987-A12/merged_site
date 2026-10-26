@@ -15,7 +15,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
   children,
   className,
   badge,
-  glowColor = "rgba(194, 184, 163, 0.15)",
+  glowColor = "rgba(119, 221, 164, 0.12)",
   laserSweep = false,
   ...props
 }) => {
@@ -75,13 +75,13 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
 
       {/* Laser Sweep Scanline */}
       {laserSweep && (
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-transparent via-[#c2b8a3]/[0.05] to-transparent animate-laser-sweep" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-transparent via-[var(--field-accent)]/[0.05] to-transparent animate-laser-sweep" />
       )}
 
       {/* Optional Top Right Tactical Badge */}
       {badge && (
-        <div className="absolute right-4 top-4 z-10 flex items-center gap-1.5 font-mono text-[9px] tracking-[0.2em] text-[#8b8f6b]">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+        <div className="absolute right-4 top-4 z-10 flex items-center gap-1.5 font-mono text-[9px] tracking-[0.2em] text-[var(--muted-ink)]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--field-accent)] shadow-[0_0_8px_var(--field-accent)]" />
           <span>{badge}</span>
         </div>
       )}

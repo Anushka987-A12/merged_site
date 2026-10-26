@@ -3,7 +3,6 @@ import { FloatingDock } from "@/components/ui/floating-dock";
 import {
   IconHome,
   IconTank,
-  IconCpu,
   IconFileText,
   IconMail,
   IconBrandInstagram,
@@ -15,7 +14,6 @@ export function SiteDock() {
   const items = [
     { title: "Home", icon: <IconHome className="h-full w-full text-[var(--field-accent)]" />, href: "/" },
     { title: "Projects", icon: <IconTank className="h-full w-full text-[var(--field-accent)]" />, href: "/projects" },
-    { title: "Subsystems", icon: <IconCpu className="h-full w-full text-[var(--field-accent)]" />, href: "/subsystems" },
     { title: "Research", icon: <IconFileText className="h-full w-full text-[var(--field-accent)]" />, href: "/projects#research" },
     { title: "Accomplishments", icon: <IconTrophy className="h-full w-full text-[var(--field-accent)]" />, href: "/accomplishments" },
     { title: "Team", icon: <IconUsersGroup className="h-full w-full text-[var(--field-accent)]" />, href: "/team" },

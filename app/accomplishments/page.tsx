@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { IconTrophy } from "@tabler/icons-react";
 import { SectionAtmosphere } from "@/components/section-atmosphere";
 import { AchievementsTimeline } from "@/components/achievements-timeline";
 import { RUGVED_DATA } from "@/lib/rugved-data";
+
+export const metadata: Metadata = {
+  title: "Accomplishments",
+  description:
+    "RUGVED Systems competition results and milestones across robotics, AI, computer vision and defence innovation.",
+};
 
 export default function AccomplishmentsPage() {
   return (
@@ -9,7 +16,7 @@ export default function AccomplishmentsPage() {
       data-background-slot="accomplishments"
       className="relative isolate mx-auto min-h-screen max-w-[1180px] space-y-10 px-5 pb-24 pt-10 md:space-y-14 md:px-10 md:pt-16"
     >
-      <SectionAtmosphere variant="team" />
+      <SectionAtmosphere variant="accomplishments" />
 
       {/* ── Page header ───────────────────────────────── */}
       <header className="border-b border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] pb-8 md:pb-10">

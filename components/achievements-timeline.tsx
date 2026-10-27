@@ -24,6 +24,7 @@ import {
   useState,
   useCallback,
   useMemo,
+  useSyncExternalStore,
 } from "react";
 
 /* ─────────────────────────────────────────────
@@ -37,7 +38,6 @@ export interface Milestone {
   badge?: string;
   tag?: string;
   stats?: string[];
-  image?: string;
   type?: string;
 }
 
@@ -56,14 +56,31 @@ function normaliseYear(raw: string): string {
   return m ? m[0] : raw;
 }
 
+/* ── Reduced-motion preference (external store) ── */
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeReducedMotion(onChange: () => void) {
+  const mq = window.matchMedia(REDUCED_MOTION_QUERY);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
+
+function getReducedMotion() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
+function getReducedMotionServer() {
+  return false;
+}
+
 /** Animate a number from 0 → target over ~800ms */
 function useOdometer(target: number, active: boolean, reducedMotion: boolean) {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number | null>(null);
+  const running = active && !reducedMotion;
 
   useEffect(() => {
-    if (!active) { setValue(0); return; }
-    if (reducedMotion) { setValue(target); return; }
+    if (!running) return;
 
     const start = performance.now();
     const duration = 800;
@@ -77,8 +94,11 @@ function useOdometer(target: number, active: boolean, reducedMotion: boolean) {
     }
     rafRef.current = requestAnimationFrame(tick);
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [active, target, reducedMotion]);
+  }, [running, target]);
 
+  // Derive the resting value instead of writing it from the effect.
+  if (!active) return 0;
+  if (reducedMotion) return target;
   return value;
 }
 
@@ -111,14 +131,11 @@ function StatChip({ raw, active, reducedMotion }: { raw: string; active: boolean
 ───────────────────────────────────────────── */
 export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) {
   // ── Reduced-motion preference ─────────────────
-  const [reducedMotion, setReducedMotion] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+  const reducedMotion = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotion,
+    getReducedMotionServer,
+  );
 
   // ── Build display list: one entry per milestone ───────
   // Group milestones: deduplicate year labels for the rail
@@ -141,6 +158,7 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
 
   // ── Active tracking ────────────────────────────
   const [activeYear, setActiveYear] = useState<string>(railYears[0] ?? "");
+  const [activeId, setActiveId] = useState<number>(entries[0]?.id ?? 0);
   const [progressPct, setProgressPct] = useState(0); // 0-100 fill of rail line
 
   // Refs to entry DOM nodes keyed by milestone id
@@ -167,11 +185,14 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
           if (dist < bestDist) { bestDist = dist; best = e; }
         }
 
-        const year = (best.target as HTMLElement).dataset.normYear ?? "";
+        const target = best.target as HTMLElement;
+        const year = target.dataset.normYear ?? "";
+        const id = Number(target.dataset.id);
         if (year) {
           setActiveYear(year);
+          if (Number.isFinite(id)) setActiveId(id);
           // Deep-link: update hash without page jump
-          history.replaceState(null, "", year ? `#${year}` : " ");
+          history.replaceState(null, "", `#${year}`);
         }
       },
       { rootMargin: "-45% 0px -45% 0px" }
@@ -215,6 +236,7 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
       (el) => el.dataset.normYear === hash
     );
     if (target) {
+      setActiveId(Number(target.dataset.id));
       setTimeout(() => {
         target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
       }, 200);
@@ -229,7 +251,12 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
         (e) => e.dataset.normYear === year
       );
       if (el) {
-        el.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+        setActiveYear(year);
+        setActiveId(Number(el.dataset.id));
+        el.scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "center",
+        });
       }
     },
     [reducedMotion]
@@ -238,14 +265,10 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
   // ── Entry visibility state for entrance animation ──────
   // We track which entries have entered the viewport (for opacity fade-in)
   const [visibleIds, setVisibleIds] = useState<Set<number>>(new Set());
-  const [pastIds, setPastIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    if (reducedMotion) {
-      // Show all immediately
-      setVisibleIds(new Set(entries.map((e) => e.id)));
-      return;
-    }
+    // Reduced-motion visibility is derived at render time; no observer needed.
+    if (reducedMotion) return;
     const io = new IntersectionObserver(
       (ioEntries) => {
         setVisibleIds((prev) => {
@@ -263,13 +286,8 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
     return () => io.disconnect();
   }, [entries, reducedMotion]);
 
-  // Dim past entries
-  useEffect(() => {
-    const idx = entries.findIndex((e) => e.normYear === activeYear);
-    if (idx < 0) return;
-    // Any entry with an earlier index is "past"
-    setPastIds(new Set(entries.slice(0, idx).map((e) => e.id)));
-  }, [activeYear, entries]);
+  // Index of the active entry (used to dim entries already scrolled past).
+  const activeIndex = entries.findIndex((e) => e.id === activeId);
 
   // ─────────────────────────────────────────────────────────
   // Render
@@ -408,13 +426,13 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
           padding: 0;
         }
 
-        /* Each entry occupies ~1 screen height */
+        /* Compact entry rhythm; the rail supplies the sense of place. */
         .at-entry {
-          min-height: 90svh;
+          min-height: 0;
           display: flex;
           flex-direction: column;
           justify-content: center;
-          padding: 48px 0;
+          padding: 14px 0;
           scroll-margin-top: 80px; /* offset sticky nav */
           /* Entrance animation */
           opacity: 0;
@@ -527,25 +545,6 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
         .at-stat-num { font-size: 14px; }
         .at-stat-unit { font-size: 10px; opacity: 0.7; }
 
-        /* Entry image */
-        .at-entry__img-wrap {
-          margin-top: 24px;
-          overflow: hidden;
-          border: 1px solid color-mix(in srgb, var(--at-accent) 22%, transparent);
-          max-height: 240px;
-        }
-        .at-entry__img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-          filter: grayscale(30%) brightness(0.88);
-          transition: filter 350ms ease;
-        }
-        .at-entry.is-active .at-entry__img {
-          filter: none;
-        }
-
         /* ── End caps ───────────────────────────────── */
         .at-scroll-hint {
           display: flex;
@@ -642,8 +641,8 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
             width: 100%;
           }
           .at-entry {
-            min-height: 85svh;
-            padding: 32px 0;
+            min-height: 0;
+            padding: 10px 0;
           }
           .at-scroll-hint { display: none; }
         }
@@ -661,7 +660,6 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
           .at-rail__fill,
           .at-rail__indicator { transition: none !important; }
           .at-scroll-hint__arrow { animation: none !important; }
-          .at-entry__img { transition: none !important; }
           .at-entry__card { transition: none !important; }
         }
       `}</style>
@@ -708,9 +706,9 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
           ════════════════════════════════════════ */}
           <ol className="at-entries" aria-label="Achievement entries">
             {entries.map((entry, i) => {
-              const isActive = entry.normYear === activeYear;
-              const isVisible = visibleIds.has(entry.id);
-              const isPast = pastIds.has(entry.id);
+              const isActive = entry.id === activeId;
+              const isVisible = reducedMotion || visibleIds.has(entry.id);
+              const isPast = activeIndex > -1 && i < activeIndex;
 
               return (
                 <li
@@ -765,19 +763,6 @@ export function AchievementsTimeline({ milestones }: AchievementsTimelineProps) 
                             reducedMotion={reducedMotion}
                           />
                         ))}
-                      </div>
-                    )}
-
-                    {/* Optional image */}
-                    {entry.image && (
-                      <div className="at-entry__img-wrap">
-                        <img
-                          src={entry.image}
-                          alt=""
-                          className="at-entry__img"
-                          loading="lazy"
-                          aria-hidden="true"
-                        />
                       </div>
                     )}
                   </div>

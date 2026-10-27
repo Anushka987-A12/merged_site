@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
+  IconArrowDown,
   IconArrowUpRight,
   IconFileText,
   IconTrophy,
@@ -58,7 +60,7 @@ function TimelineSpotlightItem({
     useTransform(
       scrollYProgress,
       [0, 0.36, 0.64, 1],
-      isCurrent ? [0.82, 1, 1, 0.82] : [0.46, 0.68, 0.68, 0.46],
+      isCurrent ? [0.9, 1, 1, 0.9] : [0.7, 0.82, 0.82, 0.7],
     ),
     { stiffness: 260, damping: 34 },
   );
@@ -132,7 +134,6 @@ type DroneRect = { left: number; right: number; top: number; bottom: number };
 type DronePersonality = { side: -1 | 1; homeGap: number; yJitter: number };
 type DroneAnchor = DronePersonality & { y: number };
 type DroneGap = { yTop: number; yBot: number; yCenter: number };
-type DroneFlightPath = { from: DronePoint; c1: DronePoint; c2: DronePoint; to: DronePoint };
 type DroneGeometry = {
   width: number;
   height: number;
@@ -479,9 +480,36 @@ export default function Home() {
         <div className="home-hero__shade" aria-hidden="true" />
 
         <div className="home-hero__content">
+          <p className="home-hero__eyebrow">
+            <span className="home-hero__status" aria-hidden="true" />
+            MIT Manipal · Est. 2016
+          </p>
           <h1 id="home-title" className="home-hero__title">
-            Manipal&apos;s only defence robotics club
+            Manipal&apos;s only{" "}
+            <span className="home-hero__title-accent">defence robotics</span>{" "}
+            club.
           </h1>
+          <p className="home-hero__description">
+            Student engineers building autonomous ground and aerial systems for
+            surveillance, reconnaissance and the field.
+          </p>
+          <div className="home-hero__actions">
+            <Link href="/projects" className="home-hero__button">
+              Explore platforms <IconArrowUpRight className="h-4 w-4" />
+            </Link>
+            <Link href="/team" className="home-hero__text-link">
+              Meet the team
+            </Link>
+          </div>
+          <ul className="home-hero__meta" aria-label="Core capabilities">
+            <li>WALRUS UGV</li>
+            <li>UAV SWARM</li>
+            <li>AI AUTONOMY</li>
+          </ul>
+          <a href="#about" className="home-hero__scroll">
+            <span>Scroll to explore</span>
+            <IconArrowDown className="h-4 w-4" aria-hidden="true" />
+          </a>
         </div>
       </section>
 
@@ -504,7 +532,7 @@ export default function Home() {
             variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } }}
             transition={{ duration: 0.55, ease: "easeOut" }}
           >
-            <h2 className="max-w-[15ch] font-commissioner text-4xl font-bold leading-tight tracking-tight text-[var(--ink)] md:text-6xl">
+            <h2 className="max-w-[15ch] font-commissioner text-4xl font-bold leading-[1.04] tracking-tight text-[var(--ink)] md:text-5xl xl:text-6xl">
               Engineering for the unstructured world.
             </h2>
           </motion.div>
@@ -519,6 +547,20 @@ export default function Home() {
               across engineering, research and operations develop the systems
               together.
             </p>
+            <ul className="home-about__stats">
+              <li>
+                <strong>2016</strong>
+                <span>Founded at MIT Manipal</span>
+              </li>
+              <li>
+                <strong>14</strong>
+                <span>Competition milestones</span>
+              </li>
+              <li>
+                <strong>2</strong>
+                <span>Field platforms in development</span>
+              </li>
+            </ul>
           </motion.div>
         </motion.div>
       </motion.section>
@@ -537,7 +579,17 @@ export default function Home() {
               <h2 className="font-commissioner text-3xl font-bold tracking-tight text-[var(--ink)] md:text-4xl">
                 Our milestones.
               </h2>
+              <p className="mt-3 max-w-[52ch] text-sm leading-7 text-[var(--muted-ink)]">
+                From makerthon wins to a national defence expo showcase — a
+                decade of student-built robotics.
+              </p>
             </div>
+            <Link
+              href="/accomplishments"
+              className="inline-flex shrink-0 items-center gap-2 font-mono text-[10px] font-bold tracking-[0.16em] text-[var(--field-accent)]"
+            >
+              FULL RECORD <IconArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
           </header>
           <div className="timeline-layout">
             {/* flex row: sticky year-rail on the left, existing track on the right */}
@@ -595,12 +647,18 @@ export default function Home() {
         className="pb-8"
       >
         <div className="flex flex-col gap-4 border-y border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] py-7 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="font-commissioner text-2xl font-bold tracking-tight text-[var(--ink)] md:text-3xl">
-            Support student-led robotics.
-          </h2>
-          <a href="https://rugved.co.in/#contact" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.16em] text-[var(--field-accent)]">
+          <div>
+            <h2 className="font-commissioner text-2xl font-bold tracking-tight text-[var(--ink)] md:text-3xl">
+              Support student-led robotics.
+            </h2>
+            <p className="mt-2 max-w-[56ch] text-sm leading-7 text-[var(--muted-ink)]">
+              Partner with the team on components, field testing and competition
+              travel.
+            </p>
+          </div>
+          <Link href="/contact" className="inline-flex shrink-0 items-center gap-2 font-mono text-[10px] font-bold tracking-[0.16em] text-[var(--field-accent)]">
             BECOME A SPONSOR <IconArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+          </Link>
         </div>
       </motion.section>
     </main>

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -7,6 +8,26 @@ import { PROJECTS, getProject } from "@/lib/project-data";
 
 export function generateStaticParams() {
   return PROJECTS.map((project) => ({ slug: project.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const project = getProject(slug);
+  if (!project) return { title: "Project not found" };
+
+  return {
+    title: project.title,
+    description: project.summary,
+    openGraph: {
+      title: `${project.title} — ${project.subtitle}`,
+      description: project.summary,
+      images: [{ url: project.image, alt: project.imageAlt }],
+    },
+  };
 }
 
 export default async function ProjectDetailPage({
@@ -36,7 +57,7 @@ export default async function ProjectDetailPage({
             alt={project.imageAlt}
             fill
             sizes="(max-width: 1024px) 100vw, 58vw"
-            className="object-contain p-5 sm:p-9"
+            className="object-cover"
             priority
           />
           <figcaption>
@@ -45,7 +66,10 @@ export default async function ProjectDetailPage({
         </figure>
 
         <div className="project-detail__intro">
-          <h1 className="font-commissioner text-5xl font-bold tracking-[-0.04em] text-[var(--ink)] md:text-7xl">
+          <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-[var(--signal-accent)]">
+            {project.code} · {project.subtitle}
+          </p>
+          <h1 className="mt-3 font-commissioner text-5xl font-bold tracking-[-0.04em] text-[var(--ink)] md:text-7xl">
             {project.title}
           </h1>
           <p className="mt-6 max-w-[56ch] text-base leading-8 text-[var(--muted-ink)]">

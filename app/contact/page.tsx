@@ -1,5 +1,6 @@
 "use client";
 
+import type { FormEvent } from "react";
 import Link from "next/link";
 import { IconArrowUpRight, IconMail, IconMapPin } from "@tabler/icons-react";
 import { SectionAtmosphere } from "@/components/section-atmosphere";
@@ -20,6 +21,27 @@ const CONTACTS = [
 ];
 
 export default function ContactPage() {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const name = String(data.get("name") ?? "").trim();
+    const email = String(data.get("email") ?? "").trim();
+    const subject = String(data.get("subject") ?? "").trim();
+    const message = String(data.get("message") ?? "").trim();
+
+    const mailSubject = `[RUGVED website] ${subject || "General enquiry"}${name ? ` — ${name}` : ""}`;
+    const mailBody = [
+      name && `Name: ${name}`,
+      email && `Email: ${email}`,
+      "",
+      message || "Hello RUGVED team,",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    window.location.href = `mailto:rugved.mit@manipal.edu?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+  }
+
   return (
     <main
       data-background-slot="contact"
@@ -117,17 +139,18 @@ export default function ContactPage() {
                 Email form
               </h2>
             </div>
-            <span className="contact-form-panel__status">NOT CONNECTED</span>
+            <span className="contact-form-panel__status">EMAIL DRAFT</span>
           </div>
 
           <form
             className="contact-form mt-7"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
+            aria-describedby="contact-form-note"
           >
             <div className="contact-form__row">
               <label>
                 <span>Your name</span>
-                <input name="name" autoComplete="name" placeholder="Name" />
+                <input name="name" autoComplete="name" placeholder="Name" required />
               </label>
               <label>
                 <span>Your email</span>
@@ -136,6 +159,7 @@ export default function ContactPage() {
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
+                  required
                 />
               </label>
             </div>
@@ -145,14 +169,12 @@ export default function ContactPage() {
             </label>
             <label>
               <span>Message</span>
-              <textarea name="message" rows={5} placeholder="Write your message" />
+              <textarea name="message" rows={5} placeholder="Write your message" required />
             </label>
-            <button type="button" disabled aria-disabled="true">
-              Message delivery isn’t connected yet
-            </button>
-            <p className="contact-form__note">
-              The form is prepared, but no message is sent or stored. For now,
-              please use the team email listed here.
+            <button type="submit">Compose email</button>
+            <p id="contact-form-note" className="contact-form__note">
+              This opens your email app with the message pre-filled, addressed to
+              the team. Nothing is stored on this site.
             </p>
           </form>
         </section>

@@ -1,5 +1,5 @@
 type SectionAtmosphereProps = {
-  variant: "projects" | "subsystems" | "contact" | "team";
+  variant: "projects" | "subsystems" | "contact" | "team" | "accomplishments";
 };
 
 const LABELS = {
@@ -7,6 +7,7 @@ const LABELS = {
   subsystems: "Subsystems background: circuit paths and signal pulses",
   contact: "Communications background: signal rings and transmission sweep",
   team: "Personnel background: grid coordinates and scanning beacon",
+  accomplishments: "Awards background: tally lines and signal markers",
 } as const;
 
 export function SectionAtmosphere({ variant }: SectionAtmosphereProps) {

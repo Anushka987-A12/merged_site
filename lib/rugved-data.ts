@@ -1,25 +1,6 @@
 import { PROJECTS } from "@/lib/project-data";
 import { PATENTS, RESEARCH, RESEARCH_DISCLOSURE, PATENT_DISCLOSURE } from "@/lib/research-data";
 
-const STATIC_PROJECT_DETAILS = {
-  walrus: {
-    legacyTitle: "Unmanned Ground Vehicle",
-    legacySummary:
-      "An autonomous, modular ground vehicle exploring all-terrain mobility and payload integration.",
-    legacyDetail:
-      "WALRUS brings together a modular tracked platform, autonomous navigation, mapping and sensing research for field robotics.",
-    legacyImage: "/pictures/ugv.png",
-  },
-  drone: {
-    legacyTitle: "UAV Swarm",
-    legacySummary:
-      "An autonomous aerial system designed around coordinated sensing and mission hand-offs.",
-    legacyDetail:
-      "The swarm project investigates how multiple UAVs can coordinate navigation, sensing and task hand-offs during a shared mission.",
-    legacyImage: "/pictures/swarm.png",
-  },
-} as const;
-
 const MILESTONES = [
   { id: 1, year: "2017", type: "achievement", badge: "UAV CHALLENGE", title: "Tata Pioneer’s Makerthon", detail: "National-level winner · Techfest, IIT Bombay", tag: "FIRST COMPETITION" },
   { id: 2, year: "2018", type: "achievement", badge: "IGVC", title: "Design Challenge", detail: "8th worldwide · Intelligent Ground Vehicle Competition", tag: "INTERNATIONAL" },
@@ -38,10 +19,7 @@ const MILESTONES = [
 ];
 
 export const RUGVED_DATA = {
-  projects: PROJECTS.map((project) => ({
-    ...project,
-    ...STATIC_PROJECT_DETAILS[project.slug as keyof typeof STATIC_PROJECT_DETAILS],
-  })),
+  projects: PROJECTS,
   research: RESEARCH,
   patents: PATENTS,
   disclosures: {

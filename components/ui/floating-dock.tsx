@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useRef, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ export interface DockItem {
   title: string;
   icon: React.ReactNode;
   href: string;
+  active?: boolean;
 }
 
 export const FloatingDock = ({
@@ -49,14 +51,17 @@ const FloatingDockMobile = ({
       <AnimatePresence>
         {open && (
           <motion.div
-            layoutId="nav"
-            className="absolute inset-x-0 bottom-full mb-3 flex flex-col items-center gap-2.5"
+            layoutId="site-dock-menu"
+            className="absolute right-0 bottom-full mb-3 flex flex-col items-end gap-2.5"
           >
             {items.map((item, idx) => {
               const isExternal = item.href.startsWith("http");
               const content = (
                 <div
-                  className="floating-dock-item flex h-11 w-11 items-center justify-center rounded-full border border-[#c2b8a3]/20 bg-[#111410]/90 text-[#c2b8a3] shadow-lg backdrop-blur-xl transition-all hover:border-[#c2b8a3]/40"
+                  className={
+                    "floating-dock-item flex h-11 w-11 items-center justify-center rounded-full" +
+                    (item.active ? " is-active" : "")
+                  }
                 >
                   <div className="h-5 w-5">{item.icon}</div>
                 </div>
@@ -67,11 +72,7 @@ const FloatingDockMobile = ({
                   key={item.title}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{
-                    opacity: 0,
-                    y: 10,
-                    transition: { delay: idx * 0.04 },
-                  }}
+                  exit={{ opacity: 0, y: 10, transition: { delay: idx * 0.04 } }}
                   transition={{ delay: (items.length - 1 - idx) * 0.04 }}
                 >
                   {isExternal ? (
@@ -89,6 +90,7 @@ const FloatingDockMobile = ({
                       href={item.href}
                       onClick={() => setOpen(false)}
                       aria-label={item.title}
+                      aria-current={item.active ? "page" : undefined}
                     >
                       {content}
                     </Link>
@@ -100,11 +102,13 @@ const FloatingDockMobile = ({
         )}
       </AnimatePresence>
       <button
+        type="button"
         onClick={() => setOpen(!open)}
-        aria-label="Toggle tactical dock navigation"
-        className="floating-dock flex h-12 w-12 items-center justify-center rounded-full border border-[#c2b8a3]/25 bg-[#111410]/45 text-[#c2b8a3] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:border-emerald-500/50"
+        aria-label={open ? "Close quick navigation" : "Open quick navigation"}
+        aria-expanded={open}
+        className="floating-dock floating-dock__fab flex h-12 w-12 items-center justify-center rounded-full"
       >
-        <IconLayoutNavbarCollapse className="h-5 w-5" />
+        <IconLayoutNavbarCollapse className="h-5 w-5" aria-hidden="true" />
       </button>
     </div>
   );
@@ -124,8 +128,8 @@ const FloatingDockDesktop = ({
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "floating-dock mx-auto hidden h-16 items-end gap-3 rounded-full border border-[#c2b8a3]/25 bg-[#0c100c]/45 px-4 pb-3 shadow-[0_12px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl md:flex",
-        className
+        "floating-dock mx-auto hidden h-16 items-end gap-2.5 rounded-full px-3.5 pb-3 md:flex",
+        className,
       )}
     >
       {items.map((item) => (
@@ -140,11 +144,13 @@ function IconContainer({
   title,
   icon,
   href,
+  active,
 }: {
   mouseX: MotionValue;
   title: string;
   icon: React.ReactNode;
   href: string;
+  active?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isExternal = href.startsWith("http");
@@ -154,11 +160,11 @@ function IconContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  const widthTransform = useTransform(distance, [-150, 0, 150], [40, 68, 40]);
-  const heightTransform = useTransform(distance, [-150, 0, 150], [40, 68, 40]);
+  const widthTransform = useTransform(distance, [-150, 0, 150], [40, 64, 40]);
+  const heightTransform = useTransform(distance, [-150, 0, 150], [40, 64, 40]);
 
-  const widthTransformIcon = useTransform(distance, [-150, 0, 150], [18, 30, 18]);
-  const heightTransformIcon = useTransform(distance, [-150, 0, 150], [18, 30, 18]);
+  const widthTransformIcon = useTransform(distance, [-150, 0, 150], [18, 28, 18]);
+  const heightTransformIcon = useTransform(distance, [-150, 0, 150], [18, 28, 18]);
 
   const width = useSpring(widthTransform, {
     mass: 0.1,
@@ -190,7 +196,10 @@ function IconContainer({
       style={{ width, height }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="floating-dock-item relative flex aspect-square items-center justify-center rounded-full border border-[#c2b8a3]/15 bg-black/50 text-[#c2b8a3] transition-colors backdrop-blur-md hover:border-[#c2b8a3]/40 hover:bg-black/70"
+      className={
+        "floating-dock-item relative flex aspect-square items-center justify-center rounded-full" +
+        (active ? " is-active" : "")
+      }
     >
       <AnimatePresence>
         {hovered && (
@@ -198,7 +207,7 @@ function IconContainer({
             initial={{ opacity: 0, y: 10, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 2, x: "-50%" }}
-            className="absolute -top-9 left-1/2 w-fit rounded-md border border-[#c2b8a3]/20 bg-[#111410] px-2.5 py-1 font-mono text-[10px] tracking-wider whitespace-pre text-[#e8e6dc] shadow-md pointer-events-none"
+            className="floating-dock-tooltip pointer-events-none absolute -top-9 left-1/2 w-fit whitespace-pre rounded-md px-2.5 py-1"
           >
             {title}
           </motion.div>
@@ -211,21 +220,30 @@ function IconContainer({
       >
         {icon}
       </motion.div>
-
-
     </motion.div>
   );
 
   if (isExternal) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={title}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={title}
+        className="floating-dock__link"
+      >
         {innerElement}
       </a>
     );
   }
 
   return (
-    <Link href={href} aria-label={title}>
+    <Link
+      href={href}
+      aria-label={title}
+      aria-current={active ? "page" : undefined}
+      className="floating-dock__link"
+    >
       {innerElement}
     </Link>
   );

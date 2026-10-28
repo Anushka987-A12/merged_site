@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   IconArrowDown,
@@ -29,6 +30,16 @@ const TIMELINE_COLORS = {
   accentDot: "bg-[var(--field-accent)]",
   iconColor: "var(--blue-accent)",
 };
+
+const SPONSORS = [
+  { name: "Altium Designer", src: "/sponsors/altium.png", w: 182, h: 96 },
+  { name: "OnlyScrews", src: "/sponsors/onlyscrews.png", w: 746, h: 137 },
+  { name: "OpenMV", src: "/sponsors/openmv.png", w: 1076, h: 288 },
+  { name: "RapidHarness", src: "/sponsors/rapidharness.png", w: 496, h: 96 },
+  { name: "Batemo", src: "/sponsors/batemo.png", w: 413, h: 96 },
+  { name: "Protocase", src: "/sponsors/protocase.png", w: 178, h: 96 },
+  { name: "Ansys", src: "/sponsors/ansys.png", w: 299, h: 96 },
+];
 
 type TimelineEvent = (typeof EVENTS)[number];
 const LAST_MILESTONE_INDEX = EVENTS.length - 1;
@@ -95,7 +106,9 @@ function TimelineSpotlightItem({
           />
           <div className="timeline-entry__content">
             <div className="mb-3 flex items-center justify-end gap-3 font-mono text-[10px] tracking-[0.16em]">
-              <span className="shrink-0 font-mono text-[11px] font-bold text-[var(--muted-ink)]">{event.year}</span>
+              <span className="shrink-0 font-mono text-[11px] font-bold text-[var(--muted-ink)]">
+                {event.year}
+              </span>
             </div>
 
             <div className="flex items-start gap-2.5">
@@ -121,7 +134,6 @@ function TimelineSpotlightItem({
                 <span> · {event.detail.split(" · ").slice(1).join(" · ")}</span>
               )}
             </p>
-
           </div>
         </motion.article>
       </div>
@@ -167,7 +179,8 @@ function TimelineDroneRoute({
   const [seededPersonalities] = useState<DronePersonality[]>(() => {
     const seed = Math.random() * 100000;
     const randomAt = (index: number, salt: number) => {
-      const value = Math.sin(seed * 12.9898 + index * 78.233 + salt * 37.719) * 43758.5453;
+      const value =
+        Math.sin(seed * 12.9898 + index * 78.233 + salt * 37.719) * 43758.5453;
       return value - Math.floor(value);
     };
     return EVENTS.map((_, index) => ({
@@ -238,7 +251,11 @@ function TimelineDroneRoute({
         columnLeft: centerX - columnWidth / 2,
         columnRight: centerX + columnWidth / 2,
         anchors: EVENTS.map((_, index) => {
-          const p = personalitiesRef.current[index] ?? { side: 1 as const, homeGap: 80, yJitter: 0 };
+          const p = personalitiesRef.current[index] ?? {
+            side: 1 as const,
+            homeGap: 80,
+            yJitter: 0,
+          };
           return {
             y: rawCards[index]
               ? (rawCards[index].top + rawCards[index].bottom) / 2
@@ -257,9 +274,11 @@ function TimelineDroneRoute({
     measureFlightArea();
     const observer = new ResizeObserver(measureFlightArea);
     observer.observe(track);
-    track.querySelectorAll("[data-timeline-row], .timeline-entry").forEach((node) => {
-      observer.observe(node);
-    });
+    track
+      .querySelectorAll("[data-timeline-row], .timeline-entry")
+      .forEach((node) => {
+        observer.observe(node);
+      });
     window.addEventListener("resize", measureFlightArea, { passive: true });
     return () => {
       observer.disconnect();
@@ -355,12 +374,19 @@ function TimelineDroneRoute({
     const animate = (now: number) => {
       if (!isVisible) return;
       const geometry = geometryRef.current;
-      if (geometry.width < 1 || geometry.height < 1 || geometry.anchors.length === 0) {
+      if (
+        geometry.width < 1 ||
+        geometry.height < 1 ||
+        geometry.anchors.length === 0
+      ) {
         frameId = requestAnimationFrame(animate);
         return;
       }
 
-      const delta = previousFrame === 0 ? 1 / 60 : Math.min((now - previousFrame) / 1000, 0.05);
+      const delta =
+        previousFrame === 0
+          ? 1 / 60
+          : Math.min((now - previousFrame) / 1000, 0.05);
       const time = now / 1000;
       previousFrame = now;
       const reduced = reducedMotion.matches;
@@ -376,9 +402,10 @@ function TimelineDroneRoute({
       const frac = floatIndex - loIdx;
       const anchorLo = geometry.anchors[loIdx];
       const anchorHi = geometry.anchors[hiIdx];
-      const targetY = anchorLo && anchorHi
-        ? anchorLo.y * (1 - frac) + anchorHi.y * frac
-        : geometry.height * scrollT;
+      const targetY =
+        anchorLo && anchorHi
+          ? anchorLo.y * (1 - frac) + anchorHi.y * frac
+          : geometry.height * scrollT;
 
       // X: alternate side each milestone — left of column on even, right on odd
       // Use a gentle sine to add wandering horizontal movement within each side
@@ -386,14 +413,24 @@ function TimelineDroneRoute({
       const GAP = Math.min(72, geometry.width * 0.08); // gap outside column edge
       const wander = Math.sin(time * 0.9) * Math.min(28, geometry.width * 0.03);
       const targetX = isRightSide
-        ? clamp(geometry.columnRight + GAP + wander, geometry.columnRight + 16, geometry.width - 16)
-        : clamp(geometry.columnLeft - GAP + wander, 16, geometry.columnLeft - 16);
+        ? clamp(
+            geometry.columnRight + GAP + wander,
+            geometry.columnRight + 16,
+            geometry.width - 16,
+          )
+        : clamp(
+            geometry.columnLeft - GAP + wander,
+            16,
+            geometry.columnLeft - 16,
+          );
 
       // Smooth spring toward target
       const SPRING = 10;
       const DAMP = 0.82;
-      state.vel.x = state.vel.x * DAMP + (targetX - state.pos.x) * SPRING * delta;
-      state.vel.y = state.vel.y * DAMP + (targetY - state.pos.y) * SPRING * delta;
+      state.vel.x =
+        state.vel.x * DAMP + (targetX - state.pos.x) * SPRING * delta;
+      state.vel.y =
+        state.vel.y * DAMP + (targetY - state.pos.y) * SPRING * delta;
       state.pos.x += state.vel.x * delta;
       state.pos.y += state.vel.y * delta;
 
@@ -409,15 +446,23 @@ function TimelineDroneRoute({
       const bank = reduced
         ? 0
         : clamp(
-            ((Math.atan2(vy, Math.abs(vx) + 0.001) * 180) / Math.PI) * 0.5 * Math.sign(vx || 1),
+            ((Math.atan2(vy, Math.abs(vx) + 0.001) * 180) / Math.PI) *
+              0.5 *
+              Math.sign(vx || 1),
             -22,
             22,
           );
       const hover = reduced ? 0 : Math.sin(time * 9) * 1.5;
 
       drone.style.transform = `translate3d(${state.pos.x}px, ${state.pos.y + hover}px, 0) translate(-50%, -50%) rotate(${bank}deg)`;
-      drone.style.setProperty("--rotor-duration", `${Math.max(0.22, 1.4 - speed * 0.0005)}s`);
-      drone.style.setProperty("--flight-blur", `${Math.min(0.6, speed * 0.0003)}px`);
+      drone.style.setProperty(
+        "--rotor-duration",
+        `${Math.max(0.22, 1.4 - speed * 0.0005)}s`,
+      );
+      drone.style.setProperty(
+        "--flight-blur",
+        `${Math.min(0.6, speed * 0.0003)}px`,
+      );
       renderTrail(speed, reduced, hover);
       frameId = requestAnimationFrame(animate);
     };
@@ -430,7 +475,11 @@ function TimelineDroneRoute({
 
   return (
     <div className="timeline-drone-layer" aria-hidden="true">
-      <svg ref={trailSvgRef} className="timeline-drone-trail" preserveAspectRatio="none">
+      <svg
+        ref={trailSvgRef}
+        className="timeline-drone-trail"
+        preserveAspectRatio="none"
+      >
         <g>
           {Array.from({ length: TIMELINE_TRAIL_MAX - 1 }, (_, index) => (
             <line
@@ -450,7 +499,9 @@ function TimelineDroneRoute({
       <div
         className="timeline-drone"
         ref={droneRef}
-        style={{ transform: "translate3d(90px, 90px, 0) translate(-50%, -50%)" }}
+        style={{
+          transform: "translate3d(90px, 90px, 0) translate(-50%, -50%)",
+        }}
       >
         <TimelineDroneArt />
       </div>
@@ -519,34 +570,84 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6 }}
-        className="home-about space-y-7"
+        className="home-about"
+        aria-labelledby="about-title"
       >
         <motion.div
           className="home-about__grid"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.25 }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.14 } } }}
+          viewport={{ once: true, amount: 0.15 }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.14 } },
+          }}
         >
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.55, ease: "easeOut" }}
+          <motion.figure
+            className="home-about__media"
+            variants={{
+              hidden: { opacity: 0, y: 18 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <h2 className="max-w-[15ch] font-commissioner text-4xl font-bold leading-[1.04] tracking-tight text-[var(--ink)] md:text-5xl xl:text-6xl">
-              Engineering for the unstructured world.
-            </h2>
-          </motion.div>
+            <div className="home-about__frame">
+              <Image
+                src="/pictures/team-2026-27.jpg"
+                alt="The RUGVED team assembled in the lecture hall at MIT Manipal"
+                fill
+                sizes="(min-width: 1100px) 52vw, 94vw"
+                className="home-about__photo"
+              />
+              <span className="home-about__scan" aria-hidden="true" />
+              <span className="home-about__frame-code" aria-hidden="true">
+                IMG-04 / Manipal
+              </span>
+              <figcaption className="home-about__tag">
+                <span>Team</span> 26–27
+              </figcaption>
+            </div>
+          </motion.figure>
+
           <motion.div
             className="home-about__copy"
-            variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } }}
+            variants={{
+              hidden: { opacity: 0, y: 18 },
+              visible: { opacity: 1, y: 0 },
+            }}
             transition={{ duration: 0.55, ease: "easeOut" }}
           >
-            <p>
-              Based at MIT Manipal, RUGVED builds autonomous ground and aerial
-              robotics for surveillance, reconnaissance and defence. Students
-              across engineering, research and operations develop the systems
-              together.
+            <p className="home-about__eyebrow">
+              <span>01</span>
+              Who we are
             </p>
+            <h2 id="about-title" className="home-about__title">
+              Engineering the future of defence.
+            </h2>
+            <br></br>
+            <span className="home-about__rule" aria-hidden="true" />
+            <p className="home-about__lede">
+              R.U.G.V.E.D. is a student-led robotics and engineering team
+              focused on the development of autonomous ground vehicles and
+              defense-oriented technologies. Based in an academic environment,
+              we combine classroom learning with hands-on design, prototyping,
+              and testing. Our team works across mechanical design, electronics,
+              control systems, and software to build reliable autonomous
+              platforms. Through research-driven development and practical
+              experimentation, we aim to prepare students for real-world
+              challenges in robotics, autonomous systems, and related
+              engineering fields.
+            </p>
+            <div className="home-about__pillars">
+              <div className="home-about__pillar">
+                <h3>Innovation</h3>
+                <p>Custom-built flight controllers and UGV drivetrains.</p>
+              </div>
+              <div className="home-about__pillar">
+                <h3>Intelligence</h3>
+                <p>Autonomous CV-based target acquisition systems.</p>
+              </div>
+            </div>
             <ul className="home-about__stats">
               <li>
                 <strong>2016</strong>
@@ -598,7 +699,10 @@ export default function Home() {
                 milestones={RUGVED_DATA.milestones}
                 trackRef={trackRef}
               />
-              <div className="home-timeline__track min-w-0 flex-1" ref={trackRef}>
+              <div
+                className="home-timeline__track min-w-0 flex-1"
+                ref={trackRef}
+              >
                 <TimelineDroneRoute
                   progress={smoothProgress}
                   activeIndex={activeTimelineIndex}
@@ -620,7 +724,11 @@ export default function Home() {
           </div>
           <footer className="home-timeline__source">
             <span className="flex flex-wrap items-center gap-4">
-              <a href="https://rugved.co.in/" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://rugved.co.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 RUGVED
                 <IconArrowUpRight className="h-3.5 w-3.5" />
               </a>
@@ -635,7 +743,6 @@ export default function Home() {
             </span>
           </footer>
         </div>
-
       </motion.section>
 
       <motion.section
@@ -644,22 +751,39 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6 }}
-        className="pb-8"
+        className="home-sponsors pb-8"
+        aria-labelledby="sponsors-title"
       >
-        <div className="flex flex-col gap-4 border-y border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] py-7 sm:flex-row sm:items-center sm:justify-between">
+        <div className="home-sponsors__head">
           <div>
-            <h2 className="font-commissioner text-2xl font-bold tracking-tight text-[var(--ink)] md:text-3xl">
+            <p className="home-sponsors__eyebrow">Partners</p>
+            <h2 id="sponsors-title" className="home-sponsors__title">
               Support student-led robotics.
             </h2>
-            <p className="mt-2 max-w-[56ch] text-sm leading-7 text-[var(--muted-ink)]">
+            <p className="home-sponsors__copy">
               Partner with the team on components, field testing and competition
               travel.
             </p>
           </div>
-          <Link href="/contact" className="inline-flex shrink-0 items-center gap-2 font-mono text-[10px] font-bold tracking-[0.16em] text-[var(--field-accent)]">
+          <Link href="/contact" className="home-sponsors__cta">
             BECOME A SPONSOR <IconArrowUpRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+
+        <ul className="home-sponsors__grid" aria-label="Sponsors and partners">
+          {SPONSORS.map((sponsor) => (
+            <li className="home-sponsors__tile" key={sponsor.name}>
+              <Image
+                src={sponsor.src}
+                alt={`${sponsor.name} logo`}
+                width={sponsor.w}
+                height={sponsor.h}
+                sizes="(min-width: 1024px) 240px, 45vw"
+                className="home-sponsors__mark"
+              />
+            </li>
+          ))}
+        </ul>
       </motion.section>
     </main>
   );

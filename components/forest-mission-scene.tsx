@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 type FlightStyle = CSSProperties & { [key: `--${string}`]: string | number };
 
@@ -19,12 +19,16 @@ const INITIAL_FLIGHTS: FlightStyle[] = [
   { top: "35%", left: "116%", "--scout-scale": 0.36, "--flight-duration": "20s", "--flight-delay": "-12s", "--flight-x-a": "-39vw", "--flight-x-b": "-81vw", "--flight-end-x": "-145vw", "--flight-y-a": "31px", "--flight-y-b": "-28px", "--flight-y-end": "18px" },
 ];
 
+/* Silhouette reused for the framing pine line and the near-field foreground trees. */
+const EDGE_PINE_PATH =
+  "M98 110 80 162 91 158 61 211 79 205 44 260 73 252 30 312 68 300 18 365 64 352 9 420 61 405 0 476 61 461 16 523 65 509 23 570 70 557 42 622 77 611 67 820h34l-5-209 34 11-26-65 44 13-36-63 50 14-45-66 54 15-42-66 48 14-37-62 42 12-31-56 34 7-29-53 21 5-23-52Z";
+
 function randomBetween(min: number, max: number) {
   return min + Math.random() * (max - min);
 }
 
-function createRandomUgvPatrol() {
-  const reverse = Math.random() < 0.5;
+function createRandomUgvPatrol(forceForward = false) {
+  const reverse = forceForward ? false : Math.random() < 0.5;
   const duration = randomBetween(18, 32);
   const offsets = [
     0,
@@ -60,32 +64,6 @@ function createRandomUgvPatrol() {
   };
 }
 
-function createRandomFlights(): FlightStyle[] {
-  return INITIAL_FLIGHTS.map((flight, index) => {
-    const reverse = Math.random() < 0.34;
-    const scale = index === 0 ? randomBetween(0.88, 1.04) : randomBetween(0.3, 0.66);
-    const duration = randomBetween(12, 46);
-    const firstX = randomBetween(27, 47) * (reverse ? -1 : 1);
-    const secondX = randomBetween(74, 99) * (reverse ? -1 : 1);
-    return {
-      top: `${randomBetween(11, 42).toFixed(1)}%`,
-      left: reverse ? "116%" : "-18%",
-      opacity: randomBetween(0.54, 0.96),
-      filter: `blur(${scale < 0.42 ? randomBetween(0.5, 1.2).toFixed(1) : 0}px)`,
-      "--scout-scale": scale.toFixed(2),
-      "--flight-duration": `${duration.toFixed(1)}s`,
-      "--flight-delay": `${(-Math.random() * duration).toFixed(1)}s`,
-      "--flight-x-a": `${firstX.toFixed(1)}vw`,
-      "--flight-x-b": `${secondX.toFixed(1)}vw`,
-      "--flight-end-x": reverse ? "-145vw" : "145vw",
-      "--flight-y-a": `${randomBetween(-42, 42).toFixed(1)}px`,
-      "--flight-y-b": `${randomBetween(-48, 48).toFixed(1)}px`,
-      "--flight-y-end": `${randomBetween(-38, 38).toFixed(1)}px`,
-      "--flight-tilt": `${randomBetween(-6, 6).toFixed(1)}deg`,
-    };
-  });
-}
-
 function ScoutDrone({ style }: { style: FlightStyle }) {
   return (
     <div className="forest-scout" style={style}>
@@ -119,6 +97,7 @@ function ScoutDrone({ style }: { style: FlightStyle }) {
 
 function GroundVehicle() {
   const vehicleRef = useRef<HTMLDivElement>(null);
+  const patrolCount = useRef(0);
 
   useEffect(() => {
     const vehicle = vehicleRef.current;
@@ -131,7 +110,8 @@ function GroundVehicle() {
     const startPatrol = () => {
       if (stopped || reducedMotion.matches) return;
 
-      const patrol = createRandomUgvPatrol();
+      const patrol = createRandomUgvPatrol(patrolCount.current === 0);
+      patrolCount.current += 1;
       const viewportWidth = Math.max(window.innerWidth, 1);
       const widthRatio = viewportWidth < 768
         ? 0.72
@@ -183,6 +163,7 @@ function GroundVehicle() {
 
     return () => {
       stopped = true;
+      patrolCount.current = 0;
       animation?.cancel();
       reducedMotion.removeEventListener("change", handleMotionPreference);
     };
@@ -238,15 +219,64 @@ function GroundVehicle() {
 }
 
 export function ForestMissionScene() {
-  const [flights, setFlights] = useState(INITIAL_FLIGHTS);
+  const sceneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const randomize = window.setTimeout(() => setFlights(createRandomFlights()), 0);
-    return () => window.clearTimeout(randomize);
+    const scene = sceneRef.current;
+    if (!scene) return;
+
+    const finePointer = window.matchMedia("(pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const render = () => {
+      currentX += (targetX - currentX) * 0.09;
+      currentY += (targetY - currentY) * 0.09;
+      scene.style.setProperty("--scene-x", `${currentX.toFixed(2)}px`);
+      scene.style.setProperty("--scene-y", `${currentY.toFixed(2)}px`);
+      if (Math.abs(targetX - currentX) > 0.06 || Math.abs(targetY - currentY) > 0.06) {
+        frame = window.requestAnimationFrame(render);
+      } else {
+        frame = 0;
+      }
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!finePointer.matches || reducedMotion.matches) return;
+      targetX = (event.clientX / Math.max(window.innerWidth, 1) - 0.5) * -24;
+      targetY = (event.clientY / Math.max(window.innerHeight, 1) - 0.5) * -16;
+      if (!frame) frame = window.requestAnimationFrame(render);
+    };
+
+    const handlePointerReset = () => {
+      targetX = 0;
+      targetY = 0;
+      if (!frame) frame = window.requestAnimationFrame(render);
+    };
+
+    const handleMotionChange = () => {
+      if (reducedMotion.matches) handlePointerReset();
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("blur", handlePointerReset);
+    reducedMotion.addEventListener("change", handleMotionChange);
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("blur", handlePointerReset);
+      reducedMotion.removeEventListener("change", handleMotionChange);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
-    <div className="forest-mission-scene" aria-hidden="true">
+    <div className="forest-mission-scene" ref={sceneRef} aria-hidden="true">
+      <div className="forest-mission-scene__drift">
       <svg className="forest-mission-scene__landscape" viewBox="0 0 1440 820" preserveAspectRatio="xMidYMid slice">
         <defs>
           <linearGradient id="forest-sky" x1="720" y1="0" x2="720" y2="492" gradientUnits="userSpaceOnUse">
@@ -319,10 +349,10 @@ export function ForestMissionScene() {
           })}
         </g>
         <g className="forest-edge-pines" fill="var(--forest-pine-near)">
-          <path d="M98 110 80 162 91 158 61 211 79 205 44 260 73 252 30 312 68 300 18 365 64 352 9 420 61 405 0 476 61 461 16 523 65 509 23 570 70 557 42 622 77 611 67 820h34l-5-209 34 11-26-65 44 13-36-63 50 14-45-66 54 15-42-66 48 14-37-62 42 12-31-56 34 7-29-53 21 5-23-52Z" />
-          <path d="M98 110 80 162 91 158 61 211 79 205 44 260 73 252 30 312 68 300 18 365 64 352 9 420 61 405 0 476 61 461 16 523 65 509 23 570 70 557 42 622 77 611 67 820h34l-5-209 34 11-26-65 44 13-36-63 50 14-45-66 54 15-42-66 48 14-37-62 42 12-31-56 34 7-29-53 21 5-23-52Z" transform="translate(152 135) scale(.72)" />
-          <path d="M98 110 80 162 91 158 61 211 79 205 44 260 73 252 30 312 68 300 18 365 64 352 9 420 61 405 0 476 61 461 16 523 65 509 23 570 70 557 42 622 77 611 67 820h34l-5-209 34 11-26-65 44 13-36-63 50 14-45-66 54 15-42-66 48 14-37-62 42 12-31-56 34 7-29-53 21 5-23-52Z" transform="translate(1440 0) scale(-1 1)" />
-          <path d="M98 110 80 162 91 158 61 211 79 205 44 260 73 252 30 312 68 300 18 365 64 352 9 420 61 405 0 476 61 461 16 523 65 509 23 570 70 557 42 622 77 611 67 820h34l-5-209 34 11-26-65 44 13-36-63 50 14-45-66 54 15-42-66 48 14-37-62 42 12-31-56 34 7-29-53 21 5-23-52Z" transform="translate(1274 168) scale(-.62 .62)" />
+          <path d={EDGE_PINE_PATH} />
+          <path d={EDGE_PINE_PATH} transform="translate(152 135) scale(.72)" />
+          <path d={EDGE_PINE_PATH} transform="translate(1440 0) scale(-1 1)" />
+          <path d={EDGE_PINE_PATH} transform="translate(1274 168) scale(-.62 .62)" />
           <path d="M255 360 240 331l7 1-17-35 7 1-19-39-20 41 7-1-16 35 8-1-14 29 8-1-14 29 10-2-12 30 12-2-9 29 13-1-7 34 44 0z" />
           <path d="m320 415-12-24 6 1-14-27 6 1-17-34-17 35 6-1-13 27 6-1-11 25 7-1-10 23 9-1-7 23 10-2-4 24h40z" />
         </g>
@@ -336,7 +366,47 @@ export function ForestMissionScene() {
         </g>
         <path d="M0 704q143-21 260 1m945-6q122-27 235-4" stroke="#4f8172" strokeOpacity=".75" strokeWidth="3" />
       </svg>
-      {flights.map((flight, index) => <ScoutDrone key={index} style={flight} />)}
+      </div>
+
+      <div className="forest-mission-scene__vignette" />
+      <div className="forest-mission-scene__mist forest-mission-scene__mist--far" />
+      <div className="forest-mission-scene__mist forest-mission-scene__mist--near" />
+
+      {/* Near-field silhouettes complete the diorama framing on wide screens. */}
+      <svg className="forest-mission-scene__near" viewBox="0 0 1440 820" preserveAspectRatio="none" fill="none">
+        <g className="forest-mission-scene__near-trees" fill="#041419">
+          <path d={EDGE_PINE_PATH} transform="translate(-88 292) scale(2.72)" />
+          <path d={EDGE_PINE_PATH} transform="translate(1534 292) scale(-2.72 2.72)" />
+          <path d={EDGE_PINE_PATH} transform="translate(112 470) scale(1.34)" />
+          <path d={EDGE_PINE_PATH} transform="translate(1348 470) scale(-1.34 1.34)" />
+        </g>
+        <g className="forest-mission-scene__near-grass" fill="#061a20">
+          <path d="M0 820q26-58 44-82 8 48-4 82zM34 820q30-72 54-104 6 62-8 104zM78 820q22-52 40-76 6 44-2 76z" />
+          <path d="M1440 820q-26-58-44-82-8 48 4 82zM1406 820q-30-72-54-104-6 62 8 104zM1362 820q-22-52-40-76-6 44 2 76z" />
+          <path d="M0 820q30-34 58-46-6 24-20 46zM1440 820q-30-34-58-46 6 24 20 46z" />
+        </g>
+      </svg>
+
+      <div className="forest-hud">
+        <div className="forest-hud__corner forest-hud__corner--tl">
+          <span>13.35° N / 74.79° E</span>
+          <strong>MIT Manipal · Western Ghats</strong>
+        </div>
+        <div className="forest-hud__corner forest-hud__corner--tr">
+          <span>Field feed 07</span>
+          <strong>Autonomy · Nominal</strong>
+        </div>
+        <div className="forest-hud__corner forest-hud__corner--bl">
+          <span>Platform</span>
+          <strong>Walrus MK-II / UGV</strong>
+        </div>
+        <div className="forest-hud__corner forest-hud__corner--br">
+          <span>Airborne</span>
+          <strong>Scout swarm · Active</strong>
+        </div>
+      </div>
+
+      {INITIAL_FLIGHTS.map((flight, index) => <ScoutDrone key={index} style={flight} />)}
       <GroundVehicle />
     </div>
   );

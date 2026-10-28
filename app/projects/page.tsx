@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { SectionAtmosphere } from "@/components/section-atmosphere";
 import { ProjectsCatalog } from "@/components/projects-catalog";
+
+export const metadata: Metadata = {
+  title: "Projects & Research",
+  description:
+    "RUGVED field platforms, peer-reviewed research and patent filings across ground robotics, aerial swarms and defence autonomy.",
+};
 
 export default function ProjectsPage() {
   return (

@@ -129,12 +129,9 @@ export default function ContactPage() {
         <section className="contact-form-panel" aria-labelledby="contact-form-title">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <span className="font-mono text-[10px] tracking-[0.2em] text-[var(--field-accent)]">
-                SEND A NOTE
-              </span>
               <h2
                 id="contact-form-title"
-                className="mt-3 font-commissioner text-2xl font-bold text-[var(--ink)]"
+                className="font-commissioner text-2xl font-bold text-[var(--ink)]"
               >
                 Email form
               </h2>

@@ -531,18 +531,23 @@ export default function Home() {
         <div className="home-hero__shade" aria-hidden="true" />
 
         <div className="home-hero__content">
-          <p className="home-hero__eyebrow">
-            <span className="home-hero__status" aria-hidden="true" />
-            MIT Manipal · Est. 2016
-          </p>
-          <h1 id="home-title" className="home-hero__title">
+          <h1 id="home-title" className="home-hero__title" aria-label="RUGVED">
+            {"RUGVED".split("").map((letter, index) => (
+              <span
+                key={`${letter}-${index}`}
+                aria-hidden="true"
+                className="home-hero__letter"
+                style={{ "--i": index } as React.CSSProperties}
+              >
+                {letter}
+              </span>
+            ))}
+          </h1>
+          <span className="home-hero__title-rule" aria-hidden="true" />
+          <p className="home-hero__description">
             Manipal&apos;s only{" "}
             <span className="home-hero__title-accent">defence robotics</span>{" "}
-            club.
-          </h1>
-          <p className="home-hero__description">
-            Student engineers building autonomous ground and aerial systems for
-            surveillance, reconnaissance and the field.
+            student project.
           </p>
           <div className="home-hero__actions">
             <Link href="/projects" className="home-hero__button">
@@ -600,9 +605,6 @@ export default function Home() {
                 className="home-about__photo"
               />
               <span className="home-about__scan" aria-hidden="true" />
-              <span className="home-about__frame-code" aria-hidden="true">
-                IMG-04 / Manipal
-              </span>
               <figcaption className="home-about__tag">
                 <span>Team</span> 26–27
               </figcaption>
@@ -617,10 +619,6 @@ export default function Home() {
             }}
             transition={{ duration: 0.55, ease: "easeOut" }}
           >
-            <p className="home-about__eyebrow">
-              <span>01</span>
-              Who we are
-            </p>
             <h2 id="about-title" className="home-about__title">
               Engineering the future of defence.
             </h2>
@@ -756,7 +754,6 @@ export default function Home() {
       >
         <div className="home-sponsors__head">
           <div>
-            <p className="home-sponsors__eyebrow">Partners</p>
             <h2 id="sponsors-title" className="home-sponsors__title">
               Support student-led robotics.
             </h2>
@@ -778,7 +775,7 @@ export default function Home() {
                 alt={`${sponsor.name} logo`}
                 width={sponsor.w}
                 height={sponsor.h}
-                sizes="(min-width: 1024px) 240px, 45vw"
+                sizes="(min-width: 768px) 200px, 45vw"
                 className="home-sponsors__mark"
               />
             </li>

@@ -83,7 +83,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                 alt=""
                 width={38}
                 height={38}
-                priority
+                priority={undefined}
+                preload
                 className="site-header__logo"
               />
               <span className="site-brand-name">R.U.G.V.E.D</span>

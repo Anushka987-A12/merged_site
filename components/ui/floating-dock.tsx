@@ -1,17 +1,9 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
-import {
-  AnimatePresence,
-  MotionValue,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "motion/react";
 
 export interface DockItem {
   title: string;
@@ -19,6 +11,12 @@ export interface DockItem {
   href: string;
   active?: boolean;
 }
+
+const DOCK_BASE_SIZE = 40;
+const DOCK_MAX_SIZE = 64;
+const DOCK_BASE_ICON = 18;
+const DOCK_MAX_ICON = 28;
+const DOCK_FALLOFF = 150;
 
 export const FloatingDock = ({
   items,
@@ -48,59 +46,51 @@ const FloatingDockMobile = ({
 
   return (
     <div className={cn("relative block md:hidden", className)}>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            layoutId="site-dock-menu"
-            className="absolute right-0 bottom-full mb-3 flex flex-col items-end gap-2.5"
-          >
-            {items.map((item, idx) => {
-              const isExternal = item.href.startsWith("http");
-              const content = (
-                <div
-                  className={
-                    "floating-dock-item flex h-11 w-11 items-center justify-center rounded-full" +
-                    (item.active ? " is-active" : "")
-                  }
-                >
-                  <div className="h-5 w-5">{item.icon}</div>
-                </div>
-              );
+      {open && (
+        <div className="floating-dock-menu absolute right-0 bottom-full mb-3 flex flex-col items-end gap-2.5">
+          {items.map((item, idx) => {
+            const isExternal = item.href.startsWith("http");
+            const content = (
+              <div
+                className={
+                  "floating-dock-item flex h-11 w-11 items-center justify-center rounded-full" +
+                  (item.active ? " is-active" : "")
+                }
+              >
+                <div className="h-5 w-5">{item.icon}</div>
+              </div>
+            );
 
-              return (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10, transition: { delay: idx * 0.04 } }}
-                  transition={{ delay: (items.length - 1 - idx) * 0.04 }}
-                >
-                  {isExternal ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setOpen(false)}
-                      aria-label={item.title}
-                    >
-                      {content}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      aria-label={item.title}
-                      aria-current={item.active ? "page" : undefined}
-                    >
-                      {content}
-                    </Link>
-                  )}
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            return (
+              <div
+                key={item.title}
+                style={{ "--i": items.length - 1 - idx } as React.CSSProperties}
+              >
+                {isExternal ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setOpen(false)}
+                    aria-label={item.title}
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    aria-label={item.title}
+                    aria-current={item.active ? "page" : undefined}
+                  >
+                    {content}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -121,106 +111,108 @@ const FloatingDockDesktop = ({
   items: DockItem[];
   className?: string;
 }) => {
-  const mouseX = useMotionValue(Infinity);
+  const dockRef = useRef<HTMLDivElement>(null);
+  const pointerX = useRef<number | null>(null);
+  const frame = useRef(0);
+
+  const updateMagnification = useCallback(() => {
+    frame.current = 0;
+    const dock = dockRef.current;
+    if (!dock) return;
+
+    const activeX = pointerX.current;
+    const controls = dock.querySelectorAll<HTMLElement>("[data-dock-magnify]");
+
+    controls.forEach((control) => {
+      if (activeX === null) {
+        control.style.setProperty("--dock-size", `${DOCK_BASE_SIZE}px`);
+        control.style.setProperty("--dock-icon-size", `${DOCK_BASE_ICON}px`);
+        return;
+      }
+
+      const bounds = control.getBoundingClientRect();
+      const distance = Math.abs(activeX - (bounds.x + bounds.width / 2));
+      const influence = Math.max(0, 1 - distance / DOCK_FALLOFF);
+      const size = DOCK_BASE_SIZE + (DOCK_MAX_SIZE - DOCK_BASE_SIZE) * influence;
+      const iconSize =
+        DOCK_BASE_ICON + (DOCK_MAX_ICON - DOCK_BASE_ICON) * influence;
+
+      control.style.setProperty("--dock-size", `${size.toFixed(2)}px`);
+      control.style.setProperty("--dock-icon-size", `${iconSize.toFixed(2)}px`);
+    });
+  }, []);
+
+  const scheduleMagnification = useCallback(() => {
+    if (!frame.current) {
+      frame.current = window.requestAnimationFrame(updateMagnification);
+    }
+  }, [updateMagnification]);
+
+  useEffect(() => {
+    return () => {
+      if (frame.current) window.cancelAnimationFrame(frame.current);
+    };
+  }, []);
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    pointerX.current = event.clientX;
+    scheduleMagnification();
+  };
+
+  const handlePointerLeave = () => {
+    pointerX.current = null;
+    scheduleMagnification();
+  };
 
   return (
-    <motion.div
-      onMouseMove={(e) => mouseX.set(e.pageX)}
-      onMouseLeave={() => mouseX.set(Infinity)}
+    <div
+      ref={dockRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
       className={cn(
         "floating-dock mx-auto hidden h-16 items-end gap-2.5 rounded-full px-3.5 pb-3 md:flex",
         className,
       )}
     >
       {items.map((item) => (
-        <IconContainer mouseX={mouseX} key={item.title} {...item} />
+        <IconContainer key={item.title} {...item} />
       ))}
-    </motion.div>
+    </div>
   );
 };
 
 function IconContainer({
-  mouseX,
   title,
   icon,
   href,
   active,
 }: {
-  mouseX: MotionValue;
   title: string;
   icon: React.ReactNode;
   href: string;
   active?: boolean;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
   const isExternal = href.startsWith("http");
 
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  const widthTransform = useTransform(distance, [-150, 0, 150], [40, 64, 40]);
-  const heightTransform = useTransform(distance, [-150, 0, 150], [40, 64, 40]);
-
-  const widthTransformIcon = useTransform(distance, [-150, 0, 150], [18, 28, 18]);
-  const heightTransformIcon = useTransform(distance, [-150, 0, 150], [18, 28, 18]);
-
-  const width = useSpring(widthTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-  const height = useSpring(heightTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-
-  const widthIcon = useSpring(widthTransformIcon, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-  const heightIcon = useSpring(heightTransformIcon, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-
-  const [hovered, setHovered] = useState(false);
-
   const innerElement = (
-    <motion.div
-      ref={ref}
-      style={{ width, height }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <div
+      data-dock-magnify
       className={
         "floating-dock-item relative flex aspect-square items-center justify-center rounded-full" +
         (active ? " is-active" : "")
       }
     >
-      <AnimatePresence>
-        {hovered && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 2, x: "-50%" }}
-            className="floating-dock-tooltip pointer-events-none absolute -top-9 left-1/2 w-fit whitespace-pre rounded-md px-2.5 py-1"
-          >
-            {title}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <motion.div
-        style={{ width: widthIcon, height: heightIcon }}
-        className="flex items-center justify-center"
+      <div
+        aria-hidden="true"
+        className="floating-dock-tooltip pointer-events-none absolute -top-9 left-1/2 w-fit whitespace-pre rounded-md px-2.5 py-1"
       >
+        {title}
+      </div>
+
+      <div className="floating-dock-item__icon flex items-center justify-center">
         {icon}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 
   if (isExternal) {

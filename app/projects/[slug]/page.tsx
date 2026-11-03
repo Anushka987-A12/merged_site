@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { IconArrowLeft, IconArrowUpRight } from "@tabler/icons-react";
-import { CapabilityAnimation } from "@/components/capability-animation";
+import { CapabilityScroller } from "@/components/projects/capability-scroller";
+import { ParallaxHero } from "@/components/projects/parallax-hero";
+import { ProjectPager } from "@/components/projects/project-pager";
+import { SpecStrip } from "@/components/projects/spec-strip";
 import { PROJECTS, getProject } from "@/lib/project-data";
 
 export function generateStaticParams() {
@@ -40,6 +42,11 @@ export default async function ProjectDetailPage({
 
   if (!project) notFound();
 
+  const index = PROJECTS.findIndex((entry) => entry.slug === project.slug);
+  const previousProject =
+    PROJECTS[(index - 1 + PROJECTS.length) % PROJECTS.length];
+  const nextProject = PROJECTS[(index + 1) % PROJECTS.length];
+
   return (
     <main
       data-background-slot="project-detail"
@@ -50,72 +57,36 @@ export default async function ProjectDetailPage({
         ALL PROJECTS
       </Link>
 
-      <section className="project-detail__hero">
-        <figure className="project-detail__image">
-          <Image
-            src={project.image}
-            alt={project.imageAlt}
-            fill
-            sizes="(max-width: 1024px) 100vw, 58vw"
-            className="object-cover"
-            priority
-          />
-          <figcaption>
-            {project.code} · {project.category}
-          </figcaption>
-        </figure>
+      <ParallaxHero project={project} />
 
-        <div className="project-detail__intro">
-          <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-[var(--signal-accent)]">
-            {project.code} · {project.subtitle}
-          </p>
-          <h1 className="mt-3 font-commissioner text-5xl font-bold tracking-[-0.04em] text-[var(--ink)] md:text-7xl">
-            {project.title}
-          </h1>
-          <p className="mt-6 max-w-[56ch] text-base leading-8 text-[var(--muted-ink)]">
-            {project.summary}
-          </p>
-          <ul className="project-detail__key-points mt-7">
-            {project.keyPoints.map((point) => (
-              <li key={point}>{point}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <p className="mt-6 max-w-[70ch] text-sm leading-7 text-[var(--muted-ink)] md:text-base">
+        {project.summary}
+      </p>
 
-      <section className="project-capabilities mt-16 md:mt-24">
-        <div className="project-section-heading">
-          <h2 className="font-commissioner text-3xl font-bold tracking-tight text-[var(--ink)] md:text-4xl">
+      <SpecStrip points={project.keyPoints} />
+
+      <section
+        aria-labelledby="capabilities-heading"
+        className="mt-16 md:mt-24"
+      >
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[color-mix(in_srgb,var(--blue-accent)_24%,transparent)] pb-4">
+          <h2
+            id="capabilities-heading"
+            className="font-commissioner text-2xl font-bold text-[var(--ink)] md:text-3xl"
+          >
             Capabilities
           </h2>
+          <p className="max-w-[36ch] text-[11px] leading-6 text-[var(--muted-ink)]">
+            Scroll the dossier to step through the platform&rsquo;s systems.
+          </p>
         </div>
 
-        <div className="project-capabilities__grid mt-8">
-          {project.capabilities.map((capability, index) => (
-            <article
-              key={capability.title}
-              className="capability-card"
-              tabIndex={0}
-              aria-label={capability.title + ": " + capability.summary}
-            >
-              <CapabilityAnimation
-                kind={capability.animation}
-                label={"CAP-" + String(index + 1).padStart(2, "0")}
-              />
-              <div className="capability-card__copy">
-                <h3 className="text-xl font-bold text-[var(--ink)]">
-                  {capability.title}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-[var(--muted-ink)]">
-                  {capability.summary}
-                </p>
-              </div>
-            </article>
-          ))}
-        </div>
+        <CapabilityScroller capabilities={project.capabilities} />
       </section>
 
-      <footer className="project-source mt-14">
+      <ProjectPager previous={previousProject} next={nextProject} />
+
+      <footer className="project-source mt-10">
         <p>
           Capabilities are summarized from the RUGVED brochure. Contact the
           team for current implementation status and technical specifications.

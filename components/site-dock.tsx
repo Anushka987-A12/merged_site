@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { FloatingDock } from "@/components/ui/floating-dock";
 import {
@@ -16,19 +16,21 @@ import {
 export function SiteDock() {
   const pathname = usePathname();
   const [retracted, setRetracted] = useState(false);
-  const lastScrollY = useRef(0);
 
   useEffect(() => {
-    lastScrollY.current = window.scrollY;
+    let idleTimer: number | undefined;
+
     const handleScroll = () => {
-      const y = window.scrollY;
-      const delta = y - lastScrollY.current;
-      if (Math.abs(delta) < 8) return;
-      setRetracted(y > 280 && delta > 0);
-      lastScrollY.current = y;
+      setRetracted(window.scrollY > 280);
+      window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => setRetracted(false), 500);
     };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.clearTimeout(idleTimer);
+    };
   }, []);
 
   const isActive = (href: string) => {

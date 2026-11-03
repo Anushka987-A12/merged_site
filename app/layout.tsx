@@ -46,9 +46,6 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: ["/walrus-ugv.jpeg"],
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
   robots: {
     index: true,
     follow: true,

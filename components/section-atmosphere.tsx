@@ -1,3 +1,9 @@
+"use client";
+
+import { useRef } from "react";
+import { useAmbientActivity } from "@/lib/use-ambient-activity";
+import { AmbientDetails } from "@/components/ambient-details";
+
 type SectionAtmosphereProps = {
   variant: "projects" | "subsystems" | "contact" | "team" | "accomplishments";
 };
@@ -11,8 +17,11 @@ const LABELS = {
 } as const;
 
 export function SectionAtmosphere({ variant }: SectionAtmosphereProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  useAmbientActivity(ref);
   return (
     <div
+      ref={ref}
       aria-hidden="true"
       role="presentation"
       data-background-motif={LABELS[variant]}
@@ -22,6 +31,7 @@ export function SectionAtmosphere({ variant }: SectionAtmosphereProps) {
       <span className="section-atmosphere__pattern" />
       <span className="section-atmosphere__sweep" />
       <span className="section-atmosphere__markers" />
+      <AmbientDetails />
     </div>
   );
 }

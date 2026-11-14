@@ -446,7 +446,7 @@ html.dark [class*="text-gray-4"], html.dark [class*="text-gray-5"], html.dark [c
 }
 @keyframes atmosphere-breathe { to { transform: scale(1.06) translate3d(1%, -1%, 0); opacity: 0.95; } }
 @keyframes atmosphere-drift { to { transform: rotate(360deg); } }
-@keyframes atmosphere-markers { to { background-position: 38px -24px; opacity: 0.6; } }
+@keyframes atmosphere-markers { to { transform: translate3d(38px, -24px, 0); opacity: 0.6; } }
 @keyframes atmosphere-signal { to { transform: translateX(-2.5%) scale(1.03); opacity: 0.5; } }
 @media (prefers-reduced-motion: reduce) {
   .section-atmosphere__glow, .section-atmosphere__sweep, .section-atmosphere__markers,

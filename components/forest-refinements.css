@@ -1,0 +1,73 @@
+/* Keep the centered hero, with a dusk pixel forest and quiet site-wide motion. */
+.home-page { overflow-anchor: none; }
+.home-page .home-hero {
+  height: auto;
+  min-height: max(620px, calc(100svh - 60px));
+  align-items: center;
+}
+.home-page .home-hero__content {
+  width: min(100%, 860px);
+  max-width: 860px;
+  margin-inline: auto;
+  padding: 72px 24px 220px;
+  min-width: 0;
+}
+.home-hero .forest-mission-scene { background: #173c46; }
+.home-hero .forest-mission-scene__drift { inset: 0 -1.5%; transform: translate3d(calc(var(--scene-x) * .2), 0, 0); }
+.pixel-forest { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.home-hero .forest-mission-scene__vignette { background: linear-gradient(180deg, #07172030, transparent 30%, transparent 80%, #07172055); }
+.home-page .home-hero__shade { background: radial-gradient(ellipse at 50% 48%, #051b23a6, #051b235c 38%, transparent 72%); }
+.home-page .home-hero__title { text-shadow: 0 3px 0 #102a36, 0 8px 32px #05172066; }
+.home-page .home-hero__description { color: #deebe1; text-shadow: 0 2px 8px #051720; }
+.home-hero .forest-scout--roaming { top: 0; left: 0; animation: none; width: clamp(72px, 8vw, 110px); filter: drop-shadow(0 4px 3px #061b2780); }
+.home-hero .forest-ugv { width: min(26vw, 360px); top: var(--ugv-top, 70%); bottom: auto; filter: none; }
+.home-hero .forest-ugv__suspension { transform-box: fill-box; transform-origin: center bottom; }
+.home-hero .forest-scout__rotor { animation-duration: var(--scout-rotor-speed, 180ms); }
+.home-page .home-hero__title { width: min(68vw, 720px, 88svh); flex-shrink: 0; line-height: 1; animation: none; }
+.rugved-wordmark { display: block; width: 100%; height: auto; overflow: visible; color: #edf6ed; filter: drop-shadow(0 4px 0 #102a36); }
+.home-hero .forest-hud { opacity: .65; }
+.home-hero .forest-hud__corner--bl, .home-hero .forest-hud__corner--br { bottom: 12px; }
+.ambient-details { position: absolute; inset: 0; overflow: hidden; pointer-events: none; color: #82c9c0; contain: paint; }
+.forest-mission-scene > .ambient-details { z-index: 3; }
+.ambient-particle { position: absolute; width: 2px; height: 2px; background: #9fcfa9; opacity: 0; animation: ambient-float var(--duration, 23s) ease-in-out var(--delay, 0s) infinite; }
+.ambient-particle:nth-child(3n) { background: #d8be81; width: 3px; }
+.ambient-drone { position: absolute; left: -12%; width: 62px; opacity: .15; animation: ambient-roam 53s ease-in-out infinite; }
+.ambient-drone--0 { top: 23%; animation-delay: -12s; }
+.ambient-drone--1 { top: 71%; width: 42px; opacity: .1; animation-duration: 71s; animation-delay: -41s; animation-direction: reverse; }
+@keyframes ambient-float { 0%,100% { transform: translate3d(0, 12px, 0); opacity: 0; } 30% { opacity: .4; } 70% { opacity: .25; } 90% { transform: translate3d(30px, -65px, 0); opacity: 0; } }
+@keyframes ambient-roam { 0% { transform: translate3d(0, 0, 0) rotate(-3deg); } 40% { transform: translate3d(48vw, -35px, 0) rotate(4deg); } 70% { transform: translate3d(74vw, 25px, 0) rotate(-2deg); } 100% { transform: translate3d(125vw, -8px, 0) rotate(0); } }
+[data-motion-paused="true"] *, [data-motion-paused="true"] *::before, [data-motion-paused="true"] *::after { animation-play-state: paused !important; }
+/* Moving a composited layer avoids repainting a large background every frame. */
+@keyframes atmosphere-markers { to { transform: translate3d(38px, -24px, 0); opacity: .6; } }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .home-about__pillar, .home-sponsors__grid > li { transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease; }
+  .home-about__pillar:hover, .home-sponsors__grid > li:hover { transform: translateY(-3px); border-color: var(--field-accent); }
+}
+@media (max-width: 767px) {
+  .home-hero .forest-ugv { width: min(66vw, 340px); top: var(--ugv-top, 70%); bottom: auto; }
+  .home-page .home-hero__title { width: 88vw; }
+  .forest-scout--roaming[data-secondary="true"] { display: none; }
+  .ambient-drone--1, .ambient-particle:nth-child(n+7) { display: none; }
+  .home-page .home-hero__content { padding: 64px 24px 170px; }
+}
+/* Lock the hero to the compact (minimised-window) proportions on wide / full-screen viewports.
+   Without this, vw-only rules keep growing the title + tank and the JS ground-line math
+   (computed for a 640x360 slice) pushes the tank up into the buttons. */
+@media (min-width: 1280px) {
+  .home-page .home-hero__content { width: min(100%, 860px); max-width: 860px; }
+  .home-page .home-hero__title { width: min(56vw, 720px, 88svh); }
+  .home-hero .forest-ugv { width: min(22vw, 360px); top: var(--ugv-top, 70%); bottom: auto; }
+  .home-hero .forest-scout--roaming { width: clamp(72px, 7vw, 110px); }
+}
+@media (min-width: 1440px) {
+  .home-hero .forest-ugv { width: min(22vw, 360px); }
+}
+@media (min-width: 1600px) {
+  .home-page .home-hero__content { width: min(100%, 860px); max-width: 860px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambient-particle, .ambient-drone { animation: none !important; }
+  .ambient-particle { opacity: .25; }
+  .ambient-drone { left: 85%; }
+  .home-hero .forest-mission-scene__drift { transform: none; }
+}

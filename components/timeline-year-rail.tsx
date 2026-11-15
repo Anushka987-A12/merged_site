@@ -35,8 +35,8 @@ export function TimelineYearRail({ milestones, trackRef }: Props) {
   const indexToYear = milestones.map((m) => normYear(m.year));
 
   const [activeYear, setActiveYear] = useState(railYears[0] ?? "");
-  const [progressPct, setProgressPct] = useState(0);
-  const rafPending = useRef(false);
+  const fillRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<number | null>(null);
 
   /* ── Scroll-spy ─────────────────────────────────────────────────
      Observe every [data-timeline-row] inside the track.
@@ -82,25 +82,27 @@ export function TimelineYearRail({ milestones, trackRef }: Props) {
 
   /* ── Progress fill: rAF-throttled scroll handler ─────────────── */
   const updateProgress = useCallback(() => {
-    rafPending.current = false;
+    frameRef.current = null;
     const track = trackRef.current;
     if (!track) return;
     const { top, height } = track.getBoundingClientRect();
     const scrolled = Math.max(0, -top);
     const total = Math.max(1, height - window.innerHeight);
-    setProgressPct(Math.min(100, (scrolled / total) * 100));
+    if (fillRef.current) fillRef.current.style.transform = `scaleY(${Math.min(1, scrolled / total)})`;
   }, [trackRef]);
 
   useEffect(() => {
     const onScroll = () => {
-      if (!rafPending.current) {
-        rafPending.current = true;
-        requestAnimationFrame(updateProgress);
-      }
+      if (frameRef.current === null) frameRef.current = requestAnimationFrame(updateProgress);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     updateProgress(); // seed on mount
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    };
   }, [updateProgress]);
 
   /* ── Rail click → smooth-scroll to first row of that year ────── */
@@ -238,7 +240,7 @@ export function TimelineYearRail({ milestones, trackRef }: Props) {
       >
         {/* Progress fill track */}
         <div className="tyr-track" aria-hidden="true">
-          <div className="tyr-fill" style={{ height: `${progressPct}%` }} />
+          <div ref={fillRef} className="tyr-fill" style={{ height: "100%", transform: "scaleY(0)", transformOrigin: "top" }} />
         </div>
 
         <ol className="tyr-list" role="list">

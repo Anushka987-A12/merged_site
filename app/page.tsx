@@ -17,6 +17,7 @@ import {
   useTransform,
 } from "motion/react";
 import { TimelineDroneArt } from "@/components/timeline-drone-art";
+import { RugvedWordmark } from "@/components/rugved-wordmark";
 import { ForestMissionScene } from "@/components/forest-mission-scene";
 import { TimelineYearRail } from "@/components/timeline-year-rail";
 import { RUGVED_DATA } from "@/lib/rugved-data";
@@ -532,16 +533,7 @@ export default function Home() {
 
         <div className="home-hero__content">
           <h1 id="home-title" className="home-hero__title" aria-label="RUGVED">
-            {"RUGVED".split("").map((letter, index) => (
-              <span
-                key={`${letter}-${index}`}
-                aria-hidden="true"
-                className="home-hero__letter"
-                style={{ "--i": index } as React.CSSProperties}
-              >
-                {letter}
-              </span>
-            ))}
+            <RugvedWordmark />
           </h1>
           <span className="home-hero__title-rule" aria-hidden="true" />
           <p className="home-hero__description">

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "@/components/forest-refinements.css";
 import { SiteShell } from "@/components/site-shell";
 
 const SITE_DESCRIPTION =

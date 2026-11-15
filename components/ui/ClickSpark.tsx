@@ -128,6 +128,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -142,6 +143,8 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
       startTime: now,
     }));
     sparksRef.current.push(...newSparks);
+    // Bound drawing work during rapid clicks.
+    sparksRef.current = sparksRef.current.slice(-64);
     startAnimation();
   };
 

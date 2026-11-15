@@ -33,6 +33,11 @@ function createRandomUgvPatrol(reverse = false) {
 
 function ScoutDrone({ index }: { index: number }) {
   const droneRef = useRef<HTMLDivElement>(null);
+  // Pre-hydration placeholder spot (percent of the scene) so the SSR / first
+  // paint doesn't stack all six drones in the top-left corner. JS flight
+  // takes over with pixel transforms on mount.
+  const initX = (index * .19 + .08) % .9;
+  const initY = .13 + index % 3 * .10;
   useEffect(() => {
     const drone = droneRef.current;
     const scene = drone?.parentElement;
@@ -79,6 +84,9 @@ function ScoutDrone({ index }: { index: number }) {
     const sync = () => {
       flight?.cancel();
       window.clearTimeout(retryId);
+      // Placeholder left/top served first paint — pixel flights assume 0,0.
+      drone.style.left = "0";
+      drone.style.top = "0";
       // Secondary drones are parked on small screens (CSS hides them too) —
       // keep them out of the way instead of frozen mid-hero.
       if (isParked()) {
@@ -106,7 +114,12 @@ function ScoutDrone({ index }: { index: number }) {
     return () => { cancelled = true; flight?.cancel(); window.clearTimeout(retryId); window.cancelAnimationFrame(resizeRaf); resize.disconnect(); preference.removeEventListener("change", sync); compact.removeEventListener("change", sync); };
   }, [index]);
   return (
-    <div className="forest-scout forest-scout--roaming" data-secondary={index >= 3} ref={droneRef}>
+    <div
+      className="forest-scout forest-scout--roaming"
+      data-secondary={index >= 3}
+      ref={droneRef}
+      style={{ left: `${initX * 100}%`, top: `${initY * 100}%` }}
+    >
       <svg viewBox="0 0 150 76" fill="none" aria-hidden="true">
         <g className="forest-scout__frame">
           <path d="M65 34 29 18M85 34l36-16M64 43 22 57M86 43l42 14" stroke="#172c31" strokeWidth="7" strokeLinecap="round" />
